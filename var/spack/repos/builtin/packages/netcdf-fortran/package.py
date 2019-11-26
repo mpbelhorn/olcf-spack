@@ -31,6 +31,8 @@ class NetcdfFortran(AutotoolsPackage):
 
     depends_on('netcdf-c~mpi', when='~mpi')
     depends_on('netcdf-c+mpi', when='+mpi')
+    depends_on('hdf5+hl', when="%xl")
+    depends_on('hdf5+hl', when="%xl_r")
 
     # The default libtool.m4 is too old to handle NAG compiler properly:
     # https://github.com/Unidata/netcdf-fortran/issues/94
