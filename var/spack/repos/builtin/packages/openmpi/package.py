@@ -623,6 +623,13 @@ class Openmpi(AutotoolsPackage):
             if spec.satisfies('@3.1.3:') or spec.satisfies('@3.0.3'):
                 if '+static' in spec:
                     config_args.append('--enable-static')
+        elif spec.satisfies('schedulers=lsf +pmi'):
+            config_args.extend(
+                ['--with-pmix=internal',
+                 '--enable-mpirun-prefix-by-default',
+                ])
+            if '+static' in spec:
+                config_args.append('--enable-static')
         else:
             if '+static' in spec:
                 config_args.append('--enable-static')
@@ -630,6 +637,13 @@ class Openmpi(AutotoolsPackage):
                 config_args.append('--disable-static')
 
             config_args.extend(self.with_or_without('pmi'))
+
+        if spec.satisfies('schedulers=lsf'):
+            lsf_libdirs = find_libraries('liblsf', spec['lsf'].prefix,
+                                         shared=True,
+                                         recursive=True).directories
+            if lsf_libdirs:
+              config_args.append('--with-lsf-libdir={0}'.format(lsf_libdirs[0]))
 
         if spec.satisfies('@3.0.0:', strict=True):
             config_args.append('--with-zlib={0}'.format(spec['zlib'].prefix))

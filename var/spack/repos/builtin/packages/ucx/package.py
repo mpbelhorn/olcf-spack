@@ -81,14 +81,14 @@ class Ucx(AutotoolsPackage, CudaPackage):
 
     def configure_args(self):
         spec = self.spec
-        config_args = []
+        config_args = ['--enable-devel-headers']
 
         if '+thread_multiple' in spec:
             config_args.append('--enable-mt')
         else:
             config_args.append('--disable-mt')
 
-        if '+paramter_checking' in spec:
+        if '+parameter_checking' in spec:
             config_args.append('--enable-params-check')
         else:
             config_args.append('--disable-params-check')

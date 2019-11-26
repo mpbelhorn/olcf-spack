@@ -12,3 +12,7 @@ class AutoconfArchive(AutotoolsPackage, GNUMirrorPackage):
     gnu_mirror_path = "autoconf-archive/autoconf-archive-2019.01.06.tar.xz"
 
     version('2019.01.06', sha256='17195c833098da79de5778ee90948f4c5d90ed1a0cf8391b4ab348e2ec511e3f')
+
+    def setup_dependent_build_environment(self, env, dependent_spec):
+        """Adds the ACLOCAL path for autotools."""
+        env.append_path('ACLOCAL_PATH', self.prefix.share.aclocal)
