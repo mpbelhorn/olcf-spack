@@ -54,6 +54,8 @@ class NetcdfFortran(AutotoolsPackage):
             # building takes place outside of Spack environment, i.e.
             # without Spack's compiler wrappers.
             flags.append(self.spec['netcdf-c'].libs.search_flags)
+            if self.spec.satisfies('%xl') or self.spec.satisfies('%xl_r'):
+                flags.append(self.spec['hdf5'].libs.search_flags)
 
         return None, None, flags
 
