@@ -21,7 +21,9 @@ class R(AutotoolsPackage):
 
     extendable = True
 
-    version('3.6.2', sha256='bd65a45cddfb88f37370fbcee4ac8dd3f1aebeebe47c2f968fd9770ba2bbc954')
+    version('4.0.0', sha256='06beb0291b569978484eb0dcb5d2339665ec745737bdfb4e873e7a5a75492940')
+    version('3.6.2', sha256='bd65a45cddfb88f37370fbcee4ac8dd3f1aebeebe47c2f968fd9770ba2bbc954',
+            preferred=True)
     version('3.6.1', sha256='5baa9ebd3e71acecdcc3da31d9042fb174d55a42829f8315f2457080978b1389')
     version('3.6.0', sha256='36fcac3e452666158e62459c6fc810adc247c7109ed71c5b6c3ad5fc2bf57509')
     version('3.5.3', sha256='2bfa37b7bd709f003d6b8a172ddfb6d03ddd2d672d6096439523039f7a8e678c')
@@ -81,6 +83,7 @@ class R(AutotoolsPackage):
     depends_on('libxmu', when='+X')
     depends_on('curl')
     depends_on('pcre')
+    depends_on('pcre@8.32:+utf', when='@4.0.0:')
     depends_on('java')
 
     patch('zlib.patch', when='@:3.3.2')
@@ -88,6 +91,10 @@ class R(AutotoolsPackage):
     filter_compiler_wrappers(
         'Makeconf', relative_root=os.path.join('rlib', 'R', 'etc')
     )
+
+    def url_for_version(self, version):
+        url = "https://cloud.r-project.org/src/base/R-{0}/R-{1}.tar.gz"
+        return url.format(version.up_to(1), version)
 
     @property
     def etcdir(self):
