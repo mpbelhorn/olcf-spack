@@ -23,11 +23,21 @@ class RdmaCore(CMakePackage):
     depends_on('pkgconfig', type='build')
     depends_on('libnl')
     conflicts('platform=darwin', msg='rdma-core requires FreeBSD or Linux')
-    conflicts('%intel', msg='rdma-core cannot be built with intel (use gcc instead)')
+    conflicts('%intel', when="@:20.0",
+              msg='rdma-core cannot be built with intel (use gcc instead)')
 
     def patch(self):
         """Remove broken pre-built docs from build."""
         filter_file(r'^add_subdirectory\(infiniband-diags\/man\)', ' ', 'CMakeLists.txt')
+
+        if self.spec.satisfies('%intel'):
+            filter_file(r'^static char route_data_file\[128\]',
+                        'static char route_data_file[192]',
+                        'ibacm/prov/acmp/src/acmp.c')
+            filter_file(r'^static char addr_data_file\[128\]',
+                        'static char addr_data_file[192]',
+                        'ibacm/prov/acmp/src/acmp.c')
+
 
     # NOTE: specify CMAKE_INSTALL_RUNDIR explicitly to prevent rdma-core from
     #       using the spack staging build dir (which may be a very long file
