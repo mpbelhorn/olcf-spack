@@ -59,12 +59,24 @@ class ParallelNetcdf(AutotoolsPackage):
         args.append('MPIF90={0}'.format(spec['mpi'].mpifc))
         args.append('SEQ_CC={0}'.format(spack_cc))
 
+        # FIXME: Replace this with an appropriate flag_handler method.
+        c_flags = list()
+        cxx_flags = list()
+        f_flags = list()
+        fc_flags = list()
+
         if '+pic' in spec:
-            args.extend([
-                'CFLAGS={0}'.format(self.compiler.pic_flag),
-                'CXXFLAGS={0}'.format(self.compiler.pic_flag),
-                'FFLAGS={0}'.format(self.compiler.pic_flag)
-            ])
+            for flag_list in (c_flags, cxx_flags, f_flags, fc_flags):
+                flag_list.append(self.compiler.pic_flag)
+        if spec.satisfies('+fortran@:1.12.1%gcc@10:'):
+            for flag_list in (f_flags, fc_flags):
+                flag_list.extend(["-w", "-fallow-argument-mismatch", "-O2"])
+        for var, flags in (('CFLAGS', c_flags),
+                           ('CXXFLAGS', cxx_flags),
+                           ('FFLAGS', f_flags),
+                           ('FCFLAGS', fc_flags)):
+            if flags:
+                args.append('{0}={1}'.format(var, ' '.join(flags)))
 
         if '~cxx' in spec:
             args.append('--disable-cxx')

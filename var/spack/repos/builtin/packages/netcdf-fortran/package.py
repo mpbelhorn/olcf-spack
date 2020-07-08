@@ -15,6 +15,7 @@ class NetcdfFortran(AutotoolsPackage):
     homepage = "https://www.unidata.ucar.edu/software/netcdf"
     url      = "https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-fortran-4.5.2.tar.gz"
 
+    version('4.5.3', sha256='123a5c6184336891e62cf2936b9f2d1c54e8dee299cfd9d2c1a1eb05dd668a74')
     version('4.5.2', sha256='b959937d7d9045184e9d2040a915d94a7f4d0185f4a9dceb8f08c94b0c3304aa')
     version('4.4.5', sha256='2467536ce29daea348c736476aa8e684c075d2f6cab12f3361885cb6905717b8')
     version('4.4.4', sha256='b2d395175f8d283e68c8be516e231a96b191ade67ad0caafaf7fa01b1e6b5d75')
@@ -31,6 +32,7 @@ class NetcdfFortran(AutotoolsPackage):
 
     depends_on('netcdf-c~mpi', when='~mpi')
     depends_on('netcdf-c+mpi', when='+mpi')
+    depends_on('netcdf-c@4.7.4:', when='@4.5.3:')
     depends_on('hdf5+hl', when="%xl")
     depends_on('hdf5+hl', when="%xl_r")
 
