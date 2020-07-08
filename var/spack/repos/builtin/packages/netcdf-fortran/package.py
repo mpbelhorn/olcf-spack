@@ -47,6 +47,7 @@ class NetcdfFortran(AutotoolsPackage):
             flags.append(self.compiler.pic_flag)
         elif name == 'cppflags':
             flags.append(self.spec['netcdf-c'].headers.cpp_flags)
+            flags.append(self.compiler.pic_flag)
         elif name == 'ldflags':
             # We need to specify LDFLAGS to get correct dependency_libs
             # in libnetcdff.la, so packages that use libtool for linking
@@ -79,5 +80,7 @@ class NetcdfFortran(AutotoolsPackage):
             config_args.append('CC=%s' % self.spec['mpi'].mpicc)
             config_args.append('FC=%s' % self.spec['mpi'].mpifc)
             config_args.append('F77=%s' % self.spec['mpi'].mpif77)
+            if self.spec.satisfies('+pic'):
+                config_args.append('FCFLAGS=%s' % self.compiler.pic_flag)
 
         return config_args
