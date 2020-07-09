@@ -25,6 +25,7 @@ class Gromacs(CMakePackage):
     maintainers = ['junghans', 'marvinbernhardt']
 
     version('develop', branch='master')
+    version('2020.2', sha256='7465e4cd616359d84489d919ec9e4b1aaf51f0a4296e693c249e83411b7bd2f3')
     version('2020', sha256='477e56142b3dcd9cb61b8f67b24a55760b04d1655e8684f979a75a5eec40ba01')
     version('2019.5', sha256='438061a4a2d45bbb5cf5c3aadd6c6df32d2d77ce8c715f1c8ffe56156994083a')
     version('2019.4', sha256='ba4366eedfc8a1dbf6bddcef190be8cd75de53691133f305a7f9c296e5ca1867')
@@ -48,6 +49,7 @@ class Gromacs(CMakePackage):
     version('5.1.2',  sha256='39d6f1d7ae8ba38cea6089da40676bfa4049a49903d21551abc030992a58f304')
     version('4.5.5', sha256='e0605e4810b0d552a8761fef5540c545beeaf85893f4a6e21df9905a33f871ba')
 
+    variant('debug', default=False, description='Enables debug mode')
     variant('mpi', default=True, description='Activate MPI support')
     variant('shared', default=True,
             description='Enables the build of shared libraries')
@@ -77,7 +79,8 @@ class Gromacs(CMakePackage):
     depends_on('mpi', when='+mpi')
     depends_on('plumed+mpi', when='+plumed+mpi')
     depends_on('plumed~mpi', when='+plumed~mpi')
-    depends_on('fftw')
+    depends_on('fftw+mpi', when='+mpi')
+    depends_on('fftw~mpi', when='~mpi')
     depends_on('cmake@2.8.8:3.99.99', type='build')
     depends_on('cmake@3.4.3:3.99.99', type='build', when='@2018:')
     depends_on('cuda', when='+cuda')
@@ -110,6 +113,11 @@ class Gromacs(CMakePackage):
         else:
             options.append('-DGMX_HWLOC:BOOL=OFF')
 
+        if '+debug' in self.spec:
+            options.append('-DCMAKE_BUILD_TYPE:STRING=Debug')
+        else:
+            options.append('-DCMAKE_BUILD_TYPE:STRING=Release')
+
         if '+cuda' in self.spec:
             options.append('-DGMX_GPU:BOOL=ON')
             options.append('-DCUDA_TOOLKIT_ROOT_DIR:STRING=' +
@@ -125,7 +133,7 @@ class Gromacs(CMakePackage):
         else:
             options.append('-DGMX_SIMD:STRING=' + simd_value)
 
-        if '-rdtscp' in self.spec:
+        if '~rdtscp' in self.spec:
             options.append('-DGMX_USE_RDTSCP:BOOL=OFF')
         else:
             options.append('-DGMX_USE_RDTSCP:BOOL=ON')
