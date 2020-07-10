@@ -17,6 +17,7 @@ class NetcdfFortran(AutotoolsPackage):
 
     maintainers = ['skosukhin', 'WardF']
 
+    version('4.5.3', sha256='123a5c6184336891e62cf2936b9f2d1c54e8dee299cfd9d2c1a1eb05dd668a74')
     version('4.5.2', sha256='b959937d7d9045184e9d2040a915d94a7f4d0185f4a9dceb8f08c94b0c3304aa')
     version('4.4.5', sha256='2467536ce29daea348c736476aa8e684c075d2f6cab12f3361885cb6905717b8')
     version('4.4.4', sha256='b2d395175f8d283e68c8be516e231a96b191ade67ad0caafaf7fa01b1e6b5d75')
@@ -35,7 +36,10 @@ class NetcdfFortran(AutotoolsPackage):
 
     depends_on('netcdf-c~mpi~parallel-netcdf', when='~mpi')
     depends_on('netcdf-c+mpi', when='+mpi')
+    depends_on('netcdf-c@4.7.4:', when='@4.5.3:')
     depends_on('doxygen', when='+doc', type='build')
+    depends_on('hdf5+hl', when="%xl")
+    depends_on('hdf5+hl', when="%xl_r")
 
     # The default libtool.m4 is too old to handle NAG compiler properly:
     # https://github.com/Unidata/netcdf-fortran/issues/94
@@ -77,6 +81,7 @@ class NetcdfFortran(AutotoolsPackage):
 
         if name == 'cppflags':
             config_flags = [self.spec['netcdf-c'].headers.cpp_flags]
+            # config_flags.append(self.compiler.cc_pic_flag)
         elif name == 'ldflags':
             # We need to specify LDFLAGS to get correct dependency_libs
             # in libnetcdff.la, so packages that use libtool for linking
@@ -84,6 +89,8 @@ class NetcdfFortran(AutotoolsPackage):
             # building takes place outside of Spack environment, i.e.
             # without Spack's compiler wrappers.
             config_flags = [self.spec['netcdf-c'].libs.search_flags]
+            if self.spec.satisfies('%xl') or self.spec.satisfies('%xl_r'):
+                config_flags.append(self.spec['hdf5'].libs.search_flags)
         elif name == 'fflags' and self.spec.satisfies('%gcc@10:'):
             # https://github.com/Unidata/netcdf-fortran/issues/212
             if config_flags is None:
@@ -126,6 +133,8 @@ class NetcdfFortran(AutotoolsPackage):
             config_args.append('CC=%s' % self.spec['mpi'].mpicc)
             config_args.append('FC=%s' % self.spec['mpi'].mpifc)
             config_args.append('F77=%s' % self.spec['mpi'].mpif77)
+            if self.spec.satisfies('+pic'):
+                config_args.append('FCFLAGS=%s' % self.compiler.fc_pic_flag)
 
         if '+doc' in self.spec:
             config_args.append('--enable-doxygen')

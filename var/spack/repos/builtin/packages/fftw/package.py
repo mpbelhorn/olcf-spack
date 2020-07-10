@@ -141,17 +141,18 @@ class Fftw(AutotoolsPackage):
         float_simd_features = ['altivec', 'sse']
 
         simd_options = []
-        for feature in simd_features:
-            msg = '--enable-{0}' if feature in spec.target else '--disable-{0}'
-            simd_options.append(msg.format(feature))
+        if not spec.satisfies('%pgi'):
+            for feature in simd_features:
+                msg = '--enable-{0}' if feature in spec.target else '--disable-{0}'
+                simd_options.append(msg.format(feature))
 
-        # If no features are found, enable the generic ones
-        if not any(f in spec.target for f in
-                   simd_features + float_simd_features):
-            simd_options += [
-                '--enable-generic-simd128',
-                '--enable-generic-simd256'
-            ]
+            # If no features are found, enable the generic ones
+            if not any(f in spec.target for f in
+                       simd_features + float_simd_features):
+                simd_options += [
+                    '--enable-generic-simd128',
+                    '--enable-generic-simd256'
+                ]
 
         simd_options += [
             '--enable-fma' if 'fma' in spec.target else '--disable-fma'
@@ -177,7 +178,7 @@ class Fftw(AutotoolsPackage):
                 opts += simd_options
 
             # float-only acceleration
-            if precision == 'float':
+            if precision == 'float' and not spec.satisfies('%pgi'):
                 for feature in float_simd_features:
                     if feature in spec.target:
                         msg = '--enable-{0}'

@@ -30,7 +30,7 @@ class Mpfr(AutotoolsPackage, GNUMirrorPackage):
     depends_on('automake', type='build')
     depends_on('libtool', type='build')
     depends_on('m4', type='build')
-    depends_on('autoconf-archive', when='@4.0.2:', type='build')
+    depends_on('autoconf-archive', when='@4.0.2:', type=('build', 'run'))
 
     force_autoreconf = True
 

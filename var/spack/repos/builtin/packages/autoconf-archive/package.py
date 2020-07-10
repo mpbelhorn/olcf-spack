@@ -3,6 +3,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from spack import *
+
 
 class AutoconfArchive(AutotoolsPackage, GNUMirrorPackage):
     """The GNU Autoconf Archive is a collection of more than 500 macros for
@@ -11,4 +13,15 @@ class AutoconfArchive(AutotoolsPackage, GNUMirrorPackage):
     homepage = "https://www.gnu.org/software/autoconf-archive/"
     gnu_mirror_path = "autoconf-archive/autoconf-archive-2019.01.06.tar.xz"
 
+    maintainers = ['mpbelhorn']
+
     version('2019.01.06', sha256='17195c833098da79de5778ee90948f4c5d90ed1a0cf8391b4ab348e2ec511e3f')
+
+    depends_on('autoconf', type='build')
+    depends_on('automake', type='build')
+    depends_on('libtool',  type='build')
+    depends_on('m4',       type='build')
+
+    def setup_dependent_build_environment(self, env, dependent_spec):
+        """Adds the ACLOCAL path for autotools."""
+        env.append_path('ACLOCAL_PATH', self.prefix.share.aclocal)

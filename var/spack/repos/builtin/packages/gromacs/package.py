@@ -154,7 +154,7 @@ class Gromacs(CMakePackage):
             # Fall back to this for unknown microarchitectures
             options.append('-DGMX_SIMD:STRING=None')
 
-        if '-rdtscp' in self.spec:
+        if '~rdtscp' in self.spec:
             options.append('-DGMX_USE_RDTSCP:BOOL=OFF')
         else:
             options.append('-DGMX_USE_RDTSCP:BOOL=ON')
