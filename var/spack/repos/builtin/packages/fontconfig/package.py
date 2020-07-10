@@ -19,9 +19,10 @@ class Fontconfig(AutotoolsPackage):
     depends_on('freetype')
     depends_on('gperf', type='build', when='@2.12.2:')
     depends_on('libxml2')
-    depends_on('pkgconfig', type='build')
+    depends_on('pkgconf', type='build')
     depends_on('font-util')
     depends_on('libuuid', when='@2.13.1:')
+    depends_on('bzip2')
 
     def configure_args(self):
         font_path = join_path(self.spec['font-util'].prefix, 'share', 'fonts')
