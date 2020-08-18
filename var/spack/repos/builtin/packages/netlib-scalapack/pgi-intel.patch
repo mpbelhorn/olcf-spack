@@ -1,0 +1,11 @@
+--- a/CMakeLists.txt	2020-08-06 15:36:41.979180109 -0400
++++ b/CMakeLists.txt	2020-08-06 15:37:32.837236523 -0400
+@@ -76,7 +76,7 @@
+ 
+ 
+ if (UNIX)
+-   if ( "${CMAKE_Fortran_COMPILER}" MATCHES "ifort" )
++   if ( "${CMAKE_Fortran_COMPILER_ID}" MATCHES "Intel" )
+   set( CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fltconsistency -fp_port" )
+    endif ()
+ endif ()

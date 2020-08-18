@@ -46,6 +46,7 @@ class NetlibScalapack(CMakePackage):
     patch("mpi2-compatibility.patch", when='@2.0.2:2.0.99')
     # See: https://github.com/Reference-ScaLAPACK/scalapack/pull/16
     patch("int_overflow.patch", when='@2.0.0:2.1.0')
+    patch("pgi-intel.patch", when='@2.0.0:2.1.0%pgi')
 
     @property
     def libs(self):
