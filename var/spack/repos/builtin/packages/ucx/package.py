@@ -61,7 +61,7 @@ class Ucx(AutotoolsPackage, CudaPackage):
 
     def configure_args(self):
         spec = self.spec
-        config_args = []
+        config_args = ['--enable-devel-headers']
         if '+thread_multiple' in spec:
             config_args.append('--enable-mt')
         else:
