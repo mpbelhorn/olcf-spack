@@ -31,6 +31,7 @@ class Libiberty(AutotoolsPackage, GNUMirrorPackage):
 
     # Configure and build just libiberty.
     configure_directory = 'libiberty'
+    patch_config_files = False
 
     # Set default cflags (-g -O2), add -fPIC if requested, and move to
     # the configure line.
