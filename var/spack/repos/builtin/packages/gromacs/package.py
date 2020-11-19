@@ -95,8 +95,7 @@ class Gromacs(CMakePackage):
     depends_on('cuda', when='+cuda')
     depends_on('lapack', when='+lapack')
 
-    # TODO: openmpi constraint; remove when concretizer is fixed
-    depends_on('hwloc@:1.999', when='+hwloc')
+    depends_on('hwloc', when='+hwloc')
 
     patch('gmxDetectCpu-cmake-3.14.patch', when='@2018:2019.3^cmake@3.14.0:')
     patch('gmxDetectSimd-cmake-3.14.patch', when='@:2017.99^cmake@3.14.0:')
