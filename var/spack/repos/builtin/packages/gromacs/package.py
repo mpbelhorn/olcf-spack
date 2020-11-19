@@ -116,6 +116,8 @@ class Gromacs(CMakePackage):
             options.append('-DGMX_GPU:BOOL=ON')
             options.append('-DCUDA_TOOLKIT_ROOT_DIR:STRING=' +
                            self.spec['cuda'].prefix)
+            if self.spec.satisfies('%gcc target=ppc64le'):
+                options.append('-DCUDA_NVCC_FLAGS=-Xcompiler=-mno-float128')
         else:
             options.append('-DGMX_GPU:BOOL=OFF')
 
