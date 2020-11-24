@@ -20,6 +20,8 @@ class Libtheora(AutotoolsPackage):
     depends_on('libtool',  type='build')
     depends_on('m4',       type='build')
     depends_on('doxygen',  type='build')
+    depends_on('libpng')
+    depends_on('libpng@:1.6.0', when='@:1.1.1')
     depends_on('libogg')
 
     def autoreconf(self, spec, prefix):
