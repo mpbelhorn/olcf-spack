@@ -255,6 +255,9 @@ class Kokkos(CMakePackage, CudaPackage):
                            self.spec["kokkos-nvcc-wrapper"].kokkos_cxx)
         except Exception:
             options.append("-DCMAKE_CXX_COMPILER=%s" % spack_cxx)
+        
+        if self.spec.satisfies('%gcc@8: +cuda target=ppc64le'):
+            options.append('-DCMAKE_CXX_FLAGS=-mno-float128')
 
         # Set the C++ standard to use
         options.append("-DKokkos_CXX_STANDARD=%s" %
