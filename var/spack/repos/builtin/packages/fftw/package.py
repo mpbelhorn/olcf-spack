@@ -111,19 +111,21 @@ class FftwBase(AutotoolsPackage):
         # float only
         float_simd_features = ['altivec', 'sse']
 
-        # Workaround NVIDIA compiler bug when avx512 is enabled
-        if spec.satisfies('%nvhpc') and 'avx512' in simd_features:
-            simd_features.remove('avx512')
+        # Workaround NVIDIA compiler bugs...
+        if spec.satisfies('%nvhpc') or spec.satisfies('%pgi'):
+            #  when avx512 is enabled
+            if 'avx512' in simd_features:
+                simd_features.remove('avx512')
 
-        # NVIDIA compiler does not support Altivec intrinsics
-        if spec.satisfies('%nvhpc') and 'vsx' in simd_features:
-            simd_features.remove('vsx')
-        if spec.satisfies('%nvhpc') and 'altivec' in float_simd_features:
-            float_simd_features.remove('altivec')
+            # NVIDIA compiler does not support Altivec intrinsics
+            if 'vsx' in simd_features:
+                simd_features.remove('vsx')
+            if 'altivec' in float_simd_features:
+                float_simd_features.remove('altivec')
 
-        # NVIDIA compiler does not support Neon intrinsics
-        if spec.satisfies('%nvhpc') and 'neon' in simd_features:
-            simd_features.remove('neon')
+            # NVIDIA compiler does not support Neon intrinsics
+            if 'neon' in simd_features:
+                simd_features.remove('neon')
 
         simd_options = []
         for feature in simd_features:
@@ -134,7 +136,7 @@ class FftwBase(AutotoolsPackage):
         if not any(f in spec.target for f in
                    simd_features + float_simd_features):
             # Workaround NVIDIA compiler bug
-            if not spec.satisfies('%nvhpc'):
+            if not (spec.satisfies('%nvhpc') or spec.satisfies('%pgi')):
                 simd_options += [
                     '--enable-generic-simd128',
                     '--enable-generic-simd256'
