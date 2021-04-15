@@ -1587,7 +1587,7 @@ class Environment(object):
                             if abstract)
 
         if len(root_matches) == 1:
-            return root_matches[0][1]
+            return list(root_matches.keys())[0]
 
         # More than one spec matched, and either multiple roots matched or
         # none of the matches were roots
