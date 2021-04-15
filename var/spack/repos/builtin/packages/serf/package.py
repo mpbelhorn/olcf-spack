@@ -25,6 +25,7 @@ class Serf(SConsPackage):
     depends_on('apr-util')
     depends_on('openssl')
     depends_on('zlib')
+    depends_on('uuid')
 
     patch('py3syntax.patch')
 

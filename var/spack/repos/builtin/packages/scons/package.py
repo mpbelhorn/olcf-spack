@@ -24,6 +24,7 @@ class Scons(PythonPackage):
     # Python 3 support was added in SCons 3.0.0
     depends_on('python@:2', when='@:2', type=('build', 'run'))
     depends_on('py-setuptools', when='@3.0.2:', type=('build', 'run'))
+    depends_on('uuid', type='link')
 
     patch('fjcompiler.patch', when='%fj')
 
