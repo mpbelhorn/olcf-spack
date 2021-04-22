@@ -69,7 +69,26 @@ module_file_configuration = {
                 }
             }
         },
-        'environment': spack.schema.environment.definition
+        'environment': spack.schema.environment.definition,
+        'module_property_tags': {
+            'type': 'object',
+            'validate_spec': True,
+            'patternProperties': {
+                r'\w[\w-]*': {  # spec to match
+                    'type': 'object',
+                    'default': {},
+                    'patternProperties': {
+                        'type': 'object',
+                        'default': {},
+                        'patternProperties': {
+                            r'\w[\w-]*': {  # property key
+                                'type': 'string' # property value
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

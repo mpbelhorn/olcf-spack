@@ -527,6 +527,17 @@ class BaseConfiguration(object):
         return whitelist
 
     @property
+    def module_property_tags(self):
+        """Array of module properties to tag module."""
+        properties = []
+        for constraint, module_property in self.conf.get('module_property_tags', {}).items():
+            if constraint in self.spec:
+                for key, tag in module_property.items():
+                    properties.append((key, tag))
+        properties = list(dedupe(properties))
+        return properties
+
+    @property
     def verbose(self):
         """Returns True if the module file needs to be verbose, False
         otherwise
@@ -715,6 +726,12 @@ class BaseContext(tengine.Context):
         m = self.conf.module
         return [m.make_layout(x).use_name
                 for x in getattr(self.conf, what)]
+
+    @tengine.context_property
+    def module_property_tags(self):
+        """List of module properties with which to tag module."""
+        # From 'property_tags' configuration option
+        return self.conf.module_property_tags
 
     @tengine.context_property
     def verbose(self):
