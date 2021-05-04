@@ -15,6 +15,7 @@ class Scorep(AutotoolsPackage):
     homepage = "http://www.vi-hps.org/projects/score-p"
     url      = "https://www.vi-hps.org/cms/upload/packages/scorep/scorep-4.1.tar.gz"
 
+    version('7.0',   sha256='68f24a68eb6f94eaecf500e17448f566031946deab74f2cba072ee8368af0996')
     version('6.0',   sha256='5dc1023eb766ba5407f0b5e0845ec786e0021f1da757da737db1fb71fc4236b8')
     version('5.0',   sha256='0651614eacfc92ffbe5264a3efebd0803527ae6e8b11f7df99a56a02c37633e1')
     version('4.1',   sha256='7bb6c1eecdd699b4a3207caf202866778ee01f15ff39a9ec198fcd872578fe63')
@@ -40,12 +41,17 @@ class Scorep(AutotoolsPackage):
     # two components of cube -- cubew and cubelib.
 
     # SCOREP 6
-    depends_on('otf2@2.2:', when='@6:')
+    depends_on('otf2@2.3:', when='@7:')
+    depends_on('opari2@2.0.6', when='@7:')
+    depends_on('cubew@4.5:', when='@7:')
+    depends_on('cubelib@4.5:', when='@7:')
+    # SCOREP 6
+    depends_on('otf2@2.2:', when='@6:6.99')
     # SCOREP 4 and 5
-    depends_on('otf2@2.1:', when='@4:')
-    depends_on('opari2@2.0:', when='@4:')
-    depends_on('cubew@4.4:', when='@4:')
-    depends_on('cubelib@4.4:', when='@4:')
+    depends_on('otf2@2.1:', when='@4:5.99')
+    depends_on('opari2@2.0:', when='@4:6.99')
+    depends_on('cubew@4.4:', when='@4:6.99')
+    depends_on('cubelib@4.4:', when='@4:6.99')
     # SCOREP 3
     depends_on('otf2@2:', when='@3:3.99')
     depends_on('opari2@2:', when='@3:3.99')
