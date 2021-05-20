@@ -45,9 +45,12 @@ class Serf(SConsPackage):
         # will work properly.
         if '@:1.3.9' in self.spec:
             zlib_spec = self.spec['zlib']
-            link_flags = [zlib_spec.libs.search_flags]
+            uuid_spec = self.spec['uuid']
+            link_flags = [zlib_spec.libs.search_flags] + [uuid_spec.libs.search_flags]
             link_flags.extend([self.compiler.cc_rpath_arg + d
                                for d in zlib_spec.libs.directories])
+            link_flags.extend([self.compiler.cc_rpath_arg + d
+                               for d in uuid_spec.libs.directories])
             args.append('LINKFLAGS=' + ' '.join(link_flags))
             args.append('CPPFLAGS=' + zlib_spec.headers.cpp_flags)
 
