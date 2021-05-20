@@ -1,4 +1,4 @@
-# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2021 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -64,7 +64,7 @@ class RocmOpenmpExtras(Package):
     """OpenMP support for ROCm LLVM."""
 
     homepage = tools_url + "/aomp"
-    url = tools_url + "/aomp/archive/rocm-4.0.0.tar.gz"
+    url = tools_url + "/aomp/archive/rocm-4.1.0.tar.gz"
 
     maintainers = ['srekolam', 'arjun-raj-kuppala', 'estewart08']
     version('4.1.0', sha256=versions_dict['4.1.0']['aomp'])
@@ -88,7 +88,7 @@ class RocmOpenmpExtras(Package):
                    when='@' + ver)
         depends_on('rocm-device-libs@' + ver, type=('build', 'run'),
                    when='@' + ver)
-        depends_on('llvm-amdgpu@' + ver, type=('build', 'run'),
+        depends_on('llvm-amdgpu@' + ver + ' ~openmp', type=('build', 'run'),
                    when='@' + ver)
 
         # tag changed to 'rocm-' in 4.0.0
@@ -141,8 +141,16 @@ class RocmOpenmpExtras(Package):
         env.set('AOMP', '{0}'.format(llvm_prefix))
         env.set('HIP_DEVICE_LIB_PATH',
                 '{0}/amdgcn/bitcode'.format(devlibs_prefix))
-        env.set('AOMP_GPU',
-                '`{0}/rocm-bin/mygpu`'.format(openmp_extras_prefix))
+        env.prepend_path('CPATH',
+                         '{0}/include'.format(openmp_extras_prefix))
+        env.prepend_path('LIBRARY_PATH',
+                         '{0}/lib'.format(openmp_extras_prefix))
+        if self.spec.version < Version('4.1.0'):
+            env.set('AOMP_GPU',
+                    '`{0}/rocm-bin/mygpu`'.format(openmp_extras_prefix))
+        else:
+            env.set('AOMP_GPU',
+                    '`{0}/bin/mygpu`'.format(openmp_extras_prefix))
 
     def setup_build_environment(self, env):
         openmp_extras_prefix = self.spec['rocm-openmp-extras'].prefix
@@ -155,11 +163,22 @@ class RocmOpenmpExtras(Package):
 
     def patch(self):
         src = self.stage.source_path
+        flang_warning = '-Wno-incompatible-pointer-types-discards-qualifiers)'
         aomp_extras = '{0}/rocm-openmp-extras/aomp-extras/aomp-device-libs'
         libomptarget = \
             '{0}/rocm-openmp-extras/llvm-project/openmp/libomptarget'
         flang = '{0}/rocm-openmp-extras/flang/'
 
+        if self.spec.version < Version('4.1.0'):
+            plugin = '/plugins/hsa/CMakeLists.txt'
+        else:
+            # Spack thinks some warnings from the flang build are errors.
+            # Disable those warnings.
+            filter_file('PRIVATE -fPIC)',
+                        'PRIVATE -fPIC PRIVATE ' + flang_warning,
+                        flang.format(src) + 'runtime/flang/CMakeLists.txt',
+                        string=True)
+            plugin = '/plugins/amdgpu/CMakeLists.txt'
         filter_file(
             '{ROCM_DIR}/amdgcn/bitcode', '{DEVICE_LIBS_DIR}',
             aomp_extras.format(src) + '/aompextras/CMakeLists.txt',
@@ -179,51 +198,50 @@ class RocmOpenmpExtras(Package):
             '-c ', '-c -nogpulib -nogpuinc -I{LIMIT}',
             libomptarget.format(src) + '/hostrpc/CMakeLists.txt')
 
-        if self.spec.satisfies('@:4.0.0'):
-            filter_file(
-                r'${ROCM_DIR}/hsa/include ${ROCM_DIR}/hsa/include/hsa',
-                '${HSA_INCLUDE}/hsa/include ${HSA_INCLUDE}/hsa/include/hsa',
-                libomptarget.format(src) + '/plugins/hsa/CMakeLists.txt',
-                string=True)
+        filter_file(
+            r'${ROCM_DIR}/hsa/include ${ROCM_DIR}/hsa/include/hsa',
+            '${HSA_INCLUDE}/hsa/include ${HSA_INCLUDE}/hsa/include/hsa',
+            libomptarget.format(src) + plugin,
+            string=True)
 
-            filter_file(
-                '{ROCM_DIR}/hsa/lib', '{HSA_LIB}',
-                libomptarget.format(src) + '/plugins/hsa/CMakeLists.txt')
+        filter_file(
+            '{ROCM_DIR}/hsa/lib', '{HSA_LIB}',
+            libomptarget.format(src) + plugin)
 
-            filter_file(
-                r'{ROCM_DIR}/lib\)',
-                '{HSAKMT_LIB})\nset(HSAKMT_LIB64 ${HSAKMT_LIB64})',
-                libomptarget.format(src) + '/plugins/hsa/CMakeLists.txt')
+        filter_file(
+            r'{ROCM_DIR}/lib\)',
+            '{HSAKMT_LIB})\nset(HSAKMT_LIB64 ${HSAKMT_LIB64})',
+            libomptarget.format(src) + plugin)
 
-            filter_file(
-                r'-L${LIBOMPTARGET_DEP_LIBHSAKMT_LIBRARIES_DIRS}',
-                '-L${LIBOMPTARGET_DEP_LIBHSAKMT_LIBRARIES_DIRS} -L${HSAKMT_LIB64}',
-                libomptarget.format(src) + '/plugins/hsa/CMakeLists.txt',
-                string=True)
+        filter_file(
+            r'-L${LIBOMPTARGET_DEP_LIBHSAKMT_LIBRARIES_DIRS}',
+            '-L${LIBOMPTARGET_DEP_LIBHSAKMT_LIBRARIES_DIRS} -L${HSAKMT_LIB64}',
+            libomptarget.format(src) + plugin,
+            string=True)
 
-            filter_file(
-                r'-rpath,${LIBOMPTARGET_DEP_LIBHSAKMT_LIBRARIES_DIRS}',
-                '-rpath,${LIBOMPTARGET_DEP_LIBHSAKMT_LIBRARIES_DIRS}' +
-                ',-rpath,${HSAKMT_LIB64}',
-                libomptarget.format(src) + '/plugins/hsa/CMakeLists.txt',
-                string=True)
+        filter_file(
+            r'-rpath,${LIBOMPTARGET_DEP_LIBHSAKMT_LIBRARIES_DIRS}',
+            '-rpath,${LIBOMPTARGET_DEP_LIBHSAKMT_LIBRARIES_DIRS}' +
+            ',-rpath,${HSAKMT_LIB64}',
+            libomptarget.format(src) + plugin,
+            string=True)
 
-            filter_file(
-                '{ROCM_DIR}/include', '{COMGR_INCLUDE}',
-                libomptarget.format(src) + '/plugins/hsa/CMakeLists.txt')
+        filter_file(
+            '{ROCM_DIR}/include', '{COMGR_INCLUDE}',
+            libomptarget.format(src) + plugin)
 
-            filter_file(
-                r'-L${LLVM_LIBDIR}${OPENMP_LIBDIR_SUFFIX}',
-                '-L${LLVM_LIBDIR}${OPENMP_LIBDIR_SUFFIX} -L${COMGR_LIB}',
-                libomptarget.format(src) + '/plugins/hsa/CMakeLists.txt',
-                string=True)
+        filter_file(
+            r'-L${LLVM_LIBDIR}${OPENMP_LIBDIR_SUFFIX}',
+            '-L${LLVM_LIBDIR}${OPENMP_LIBDIR_SUFFIX} -L${COMGR_LIB}',
+            libomptarget.format(src) + plugin,
+            string=True)
 
-            filter_file(
-                r'rpath,${LLVM_LIBDIR}${OPENMP_LIBDIR_SUFFIX}',
-                'rpath,${LLVM_LIBDIR}${OPENMP_LIBDIR_SUFFIX}' +
-                '-Wl,-rpath,${COMGR_LIB}',
-                libomptarget.format(src) + '/plugins/hsa/CMakeLists.txt',
-                string=True)
+        filter_file(
+            r'rpath,${LLVM_LIBDIR}${OPENMP_LIBDIR_SUFFIX}',
+            'rpath,${LLVM_LIBDIR}${OPENMP_LIBDIR_SUFFIX}' +
+            '-Wl,-rpath,${COMGR_LIB}',
+            libomptarget.format(src) + plugin,
+            string=True)
 
         filter_file(
             'ADDITIONAL_VERSIONS 2.7', 'ADDITIONAL_VERSIONS 3',
@@ -284,10 +302,6 @@ class RocmOpenmpExtras(Package):
             '-DOPENMP_TEST_CXX_COMPILER={0}/clang++'.format(bin_dir),
             '-DLIBOMPTARGET_AMDGCN_GFXLIST={0}'.format(gfx_list),
             '-DLIBOMP_COPY_EXPORTS=OFF',
-            '-DHSA_INCLUDE={0}{1}'.format(
-                hsa_prefix,
-                '' if self.spec.satisfies('@:4.0.0') else '/include/hsa'
-                ),
             '-DHSA_LIB={0}/lib'.format(hsa_prefix),
             '-DHSAKMT_LIB={0}/lib'.format(hsakmt_prefix),
             '-DHSAKMT_LIB64={0}/lib64'.format(hsakmt_prefix),
@@ -298,6 +312,15 @@ class RocmOpenmpExtras(Package):
             '-DLLVM_MAIN_INCLUDE_DIR={0}{1}'.format(src, llvm_inc),
             '-DLLVM_INSTALL_PREFIX={0}'.format(llvm_prefix)
         ]
+
+        if self.spec.version < Version('4.1.0'):
+            openmp_common_args += [
+                '-DHSA_INCLUDE={0}'.format(hsa_prefix)
+            ]
+        else:
+            openmp_common_args += [
+                '-DHSA_INCLUDE={0}/include/hsa'.format(hsa_prefix)
+            ]
 
         components['openmp'] = ['../rocm-openmp-extras/llvm-project/openmp']
         components['openmp'] += openmp_common_args
