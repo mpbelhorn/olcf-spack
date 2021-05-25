@@ -47,6 +47,18 @@ class MiopenHip(CMakePackage):
         depends_on('rocblas@' + ver, type='link', when='@' + ver)
         depends_on('rocm-device-libs@' + ver, type='link', when='@' + ver)
 
+    def patch(self):
+        """
+        Remove unwanted CMAKE search paths.
+        """
+        if self.spec.satisfies('@4.2.0:'):
+            filter_file(r'(find_package\(ROCM REQUIRED).*',
+                        r'\1)',
+                        'CMakeLists.txt')
+            filter_file(r'(list\(APPEND CMAKE_PREFIX_PATH.*)',
+                        r'#\1',
+                        'CMakeLists.txt')
+
     def setup_build_environment(self, env):
         if '@3.9.0:' in self.spec:
             lib_dir = self.spec['zlib'].libs.directories[0]

@@ -46,6 +46,15 @@ class Rocfft(CMakePackage):
     for ver in ['4.1.0', '4.2.0']:
         depends_on('hip-rocclr@' + ver, when='@' + ver)
 
+    def patch(self):
+        """
+        Remove unwanted CMAKE search paths.
+        """
+        if self.spec.satisfies('@4.2.0:'):
+            filter_file(r'(list\( APPEND CMAKE_PREFIX_PATH /opt/rocm/llvm /opt/rocm.*)',
+                        r'#\1',
+                        'CMakeLists.txt')
+
     def setup_build_environment(self, env):
         env.set('CXX', self.spec['hip'].hipcc)
 
