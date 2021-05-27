@@ -6,6 +6,7 @@
 
 from spack import *
 import shutil
+import os
 
 
 class RocmSmiLib(CMakePackage):
@@ -43,3 +44,24 @@ class RocmSmiLib(CMakePackage):
         shutil.rmtree(self.prefix.lib)
         install_tree(self.prefix.rocm_smi,  self.prefix)
         shutil.rmtree(self.prefix.rocm_smi)
+        self.fix_bindings_link()
+
+    def fix_bindings_link(self):
+        '''Corrects broken symlink at "$PREFIX/bin/rsmiBindings.py"'''
+        fname = 'rsmiBindings.py'
+        link = join_path(self.prefix.bin, fname)
+        if not os.path.islink(link):
+            return
+        original_target = os.readlink(link)
+        if not original_target.startswith('.'):
+            # Only proceed if link is to a relative path.
+            return
+        if os.path.exists(join_path(self.prefix.bin, original_target)):
+            # No action necessary if symlink is valid
+            return
+        rel_target = join_path('..', 'bindings', fname)
+        abs_target = join_path(self.prefix.bin, rel_target)
+        if os.path.exists(abs_target):
+            # If the correct target exists, replace the link
+            os.unlink(link)
+            os.symlink(rel_target, link)
