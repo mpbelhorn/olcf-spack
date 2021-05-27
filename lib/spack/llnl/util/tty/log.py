@@ -1,4 +1,4 @@
-# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2021 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -20,12 +20,17 @@ from contextlib import contextmanager
 from six import string_types
 from six import StringIO
 
+from typing import Optional  # novm
+from types import ModuleType  # novm
+
 import llnl.util.tty as tty
 
+termios = None  # type: Optional[ModuleType]
 try:
-    import termios
+    import termios as term_mod
+    termios = term_mod
 except ImportError:
-    termios = None
+    pass
 
 
 # Use this to strip escape sequences
@@ -316,7 +321,10 @@ class FileWrapper(object):
     def unwrap(self):
         if self.open:
             if self.file_like:
-                self.file = open(self.file_like, 'w')
+                if sys.version_info < (3,):
+                    self.file = open(self.file_like, 'w')
+                else:
+                    self.file = open(self.file_like, 'w', encoding='utf-8')
             else:
                 self.file = StringIO()
             return self.file
@@ -717,7 +725,11 @@ def _writer_daemon(stdin_multiprocess_fd, read_multiprocess_fd, write_fd, echo,
 
     # Use line buffering (3rd param = 1) since Python 3 has a bug
     # that prevents unbuffered text I/O.
-    in_pipe = os.fdopen(read_multiprocess_fd.fd, 'r', 1)
+    if sys.version_info < (3,):
+        in_pipe = os.fdopen(read_multiprocess_fd.fd, 'r', 1)
+    else:
+        # Python 3.x before 3.7 does not open with UTF-8 encoding by default
+        in_pipe = os.fdopen(read_multiprocess_fd.fd, 'r', 1, encoding='utf-8')
 
     if stdin_multiprocess_fd:
         stdin = os.fdopen(stdin_multiprocess_fd.fd)

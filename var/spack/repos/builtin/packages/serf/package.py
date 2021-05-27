@@ -1,4 +1,4 @@
-# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2021 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -25,6 +25,7 @@ class Serf(SConsPackage):
     depends_on('apr-util')
     depends_on('openssl')
     depends_on('zlib')
+    depends_on('uuid')
 
     patch('py3syntax.patch')
 
@@ -44,9 +45,12 @@ class Serf(SConsPackage):
         # will work properly.
         if '@:1.3.9' in self.spec:
             zlib_spec = self.spec['zlib']
-            link_flags = [zlib_spec.libs.search_flags]
+            uuid_spec = self.spec['uuid']
+            link_flags = [zlib_spec.libs.search_flags] + [uuid_spec.libs.search_flags]
             link_flags.extend([self.compiler.cc_rpath_arg + d
                                for d in zlib_spec.libs.directories])
+            link_flags.extend([self.compiler.cc_rpath_arg + d
+                               for d in uuid_spec.libs.directories])
             args.append('LINKFLAGS=' + ' '.join(link_flags))
             args.append('CPPFLAGS=' + zlib_spec.headers.cpp_flags)
 

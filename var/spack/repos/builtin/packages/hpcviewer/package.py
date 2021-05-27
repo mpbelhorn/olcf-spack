@@ -148,3 +148,9 @@ class Hpcviewer(Package):
 
         inst = Executable(inst_path)
         inst(*args)
+
+        # Older versions used a separate resource for the traceviewer.
+        if os.path.isdir('TRACE'):
+            cd('TRACE')
+            inst = Executable(inst_path)
+            inst(*args)

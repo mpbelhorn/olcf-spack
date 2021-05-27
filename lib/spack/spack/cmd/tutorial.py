@@ -1,4 +1,4 @@
-# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2021 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -25,8 +25,8 @@ level = "long"
 
 
 # tutorial configuration parameters
-tutorial_branch = "releases/v0.15"
-tutorial_mirror = "s3://spack-tutorial-container/mirror/"
+tutorial_branch = "releases/v0.16"
+tutorial_mirror = "s3://spack-binaries-prs/tutorial/ecp21/mirror"
 tutorial_key    = os.path.join(spack.paths.share_path, "keys", "tutorial.pub")
 
 # configs to remove

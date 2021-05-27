@@ -1,4 +1,4 @@
-# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2021 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -155,7 +155,7 @@ def path_from_modules(modules):
 
         if candidate_path and not os.path.exists(candidate_path):
             msg = ("Extracted path from module does not exist "
-                   "[module={0}, path={0}]")
+                   "[module={0}, path={1}]")
             tty.warn(msg.format(module_name, candidate_path))
 
         # If anything is found, then it's the best choice. This means
@@ -179,10 +179,14 @@ def get_path_from_module_contents(text, module_name):
 
     def strip_path(path, endings):
         for ending in endings:
+            splits = path.rsplit(ending)
+            if len(splits) > 1:
+                if splits[-1]:
+                    path = path[:-len(splits[-1])]
             if path.endswith(ending):
                 return path[:-len(ending)]
             if path.endswith(ending + '/'):
-                return path[:-(len(ending) + 1)]
+                return path[:-(len(ending) + 1)] 
         return path
 
     def match_pattern_and_strip(line, pattern, strip=[]):
@@ -195,9 +199,13 @@ def get_path_from_module_contents(text, module_name):
     def match_flag_and_strip(line, flag, strip=[]):
         flag_idx = line.find(flag)
         if flag_idx >= 0:
-            end = line.find(' ', flag_idx)
-            if end >= 0:
-                path = line[flag_idx + len(flag):end]
+            # Search for the first occurence of any separator marking the end of
+            # the path.
+            separators = (' ', '"', "'")
+            occurrences = [line.find(s, flag_idx) for s in separators]
+            indices = [idx for idx in occurrences if idx >= 0]
+            if indices:
+                path = line[flag_idx + len(flag):min(indices)]
             else:
                 path = line[flag_idx + len(flag):]
             path = strip_path(path, strip)
@@ -235,6 +243,7 @@ def get_path_from_module_contents(text, module_name):
         match_flag_and_strip(line, '-L', lib_endings)
 
     # Whichever path appeared most in the module, we assume is the correct path
+    # FIXME: MPB 20210519 - this is a bad assumption with modules like cray-mpich.
     if len(path_occurrences) > 0:
         return max(path_occurrences.items(), key=lambda x: x[1])[0]
 

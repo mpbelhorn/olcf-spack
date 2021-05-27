@@ -1,4 +1,4 @@
-# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2021 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -74,6 +74,7 @@ class Elfutils(AutotoolsPackage, SourcewarePackage):
     # elfutils with gcc, and then link it to clang-built libraries.
     conflicts('%apple-clang')
     conflicts('%clang')
+    conflicts('%cce')
 
     # Elfutils uses -Wall and we don't want to fail the build over a
     # stray warning.
