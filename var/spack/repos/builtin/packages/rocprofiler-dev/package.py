@@ -98,6 +98,9 @@ class RocprofilerDev(CMakePackage):
         filter_file('${HSA_RUNTIME_LIB_PATH}/../include',
                     '${HSA_RUNTIME_LIB_PATH}/../include ${HSA_KMT_LIB_PATH}/..\
                      /include', 'test/CMakeLists.txt', string=True)
+        filter_file('ROOT_DIR=$(dirname $PKG_DIR)',
+                    'ROOT_DIR="${ROCM_PATH:-/opt/rocm}"',
+                    'bin/rpl_run.sh', string=True)
 
     def cmake_args(self):
         args = ['-DPROF_API_HEADER_PATH={0}/roctracer/inc/ext'.format(
