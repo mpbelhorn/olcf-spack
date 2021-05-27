@@ -87,6 +87,8 @@ class RocmOpenmpExtras(Package):
     depends_on('elfutils', type=('build', 'link'))
     depends_on('libffi', type=('build', 'link'))
 
+    depends_on('llvm-amdgpu+openmp', when='@:4.1.99')
+    depends_on('llvm-amdgpu~openmp', when='@4.2.0:')
     for ver in ['3.9.0', '3.10.0', '4.0.0', '4.1.0', '4.2.0']:
         depends_on('hsakmt-roct@' + ver, type=('build', 'run'), when='@' + ver)
         depends_on('comgr@' + ver, type='build', when='@' + ver)
@@ -94,8 +96,8 @@ class RocmOpenmpExtras(Package):
                    when='@' + ver)
         depends_on('rocm-device-libs@' + ver, type=('build', 'run'),
                    when='@' + ver)
-        depends_on('llvm-amdgpu@' + ver + ' +openmp', type=('build', 'run'),
-                   when='@' + ver)
+
+        depends_on('llvm-amdgpu@' + ver, type=('build', 'run'), when='@' + ver)
 
         # tag changed to 'rocm-' in 4.0.0
         if ver == '3.9.0' or ver == '3.10.0':
