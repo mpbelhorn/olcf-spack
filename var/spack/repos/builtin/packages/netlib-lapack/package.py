@@ -42,9 +42,9 @@ class NetlibLapack(CMakePackage):
     variant('xblas', default=False,
             description='Builds extended precision routines using XBLAS')
 
-    patch('ibm-xl.patch', when='@3.7: %xl')
-    patch('ibm-xl.patch', when='@3.7: %xl_r')
-    patch('ibm-xl.patch', when='@3.7: %cce@9:')
+    patch('ibm-xl.patch', when='@3.7:3.8.99 %xl')
+    patch('ibm-xl.patch', when='@3.7:3.8.99 %xl_r')
+    patch('ibm-xl.patch', when='@3.7:3.8.99 %cce@9:')
 
     # https://github.com/Reference-LAPACK/lapack/issues/228
     patch('undefined_declarations.patch', when='@3.8.0:3.8.9999')
