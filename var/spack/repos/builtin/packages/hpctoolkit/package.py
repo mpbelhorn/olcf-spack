@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 from spack import *
 from spack.util.environment import SetEnv
 
@@ -117,15 +118,16 @@ class Hpctoolkit(AutotoolsPackage):
     patch('gcc10-enum.patch', when='@2020.01.01:2020.08.99 %gcc@10.0:')
 
     def patch(self):
-         # FIXME: Add a build-time dependency on python or patch the file in
-         # accordance with which of python2/python3 is available in the sysroot
-         # if `python` is not in the PATH.
-        filter_file(
-                r'#!/usr/bin/env python',
-                r'#!/usr/bin/env python3',
-                'src/tool/hpcstruct/stringify.py',
-                string=True
-                )
+        # FIXME: Add a build-time dependency on python or patch the file in
+        # accordance with which of python2/python3 is available in the sysroot
+        # if `python` is not in the PATH.
+        if not os.path.exists('/usr/bin/python'):
+            filter_file(
+                    r'#!/usr/bin/env python',
+                    r'#!/usr/bin/env python3',
+                    'src/tool/hpcstruct/stringify.py',
+                    string=True
+                    )
 
     flag_handler = AutotoolsPackage.build_system_flags
 
