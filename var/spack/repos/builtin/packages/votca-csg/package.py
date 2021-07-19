@@ -22,6 +22,9 @@ class VotcaCsg(CMakePackage):
 
     version('master', branch='master')
     version('stable', branch='stable')
+    version('2021.1',
+            sha256='e87791c7534996909a403f61ca1f2725e91f1ca7185aa6655188b814ca04f278',
+            url='https://github.com/votca/csg/archive/77b8a0bb7b1272cb65d2b02c7db8b14cb5c2a6c5.tar.gz')
     version('1.6.2', sha256='96b244b282005259832ed6ec0dc22dafe132dcfc3d73dcd8e53b62f40befb545')
     version('1.6.1', sha256='ed12bcb1ccdf71f54e21cdcc9803add4b8ebdc6b8263cb5b0034f5db01e31dbb')
     version('1.6', sha256='8cf6a4ac3ef7347c720a44d8a676f8cbd1462e162f6113de39f27b89354465ea')
@@ -34,6 +37,7 @@ class VotcaCsg(CMakePackage):
     for v in ["1.4", "1.4.1", "1.5", "1.5.1", "1.6", "1.6.1", "1.6.2",
               "master", "stable"]:
         depends_on('votca-tools@%s' % v, when="@%s:%s.0" % (v, v))
+    depends_on('votca-tools@2021', when="@2021:2021.1")
     depends_on("boost")
     depends_on("gromacs~mpi@5.1:2019.9999")
     depends_on("hdf5~mpi")
