@@ -170,6 +170,9 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     depends_on('raja+cuda', when='+raja +cuda')
     depends_on('raja+rocm', when='+raja +rocm')
 
+    # ROCm extra dependencies
+    depends_on('hip-rocclr', type='build', when='+rocm')
+
     # External libraries
     depends_on('lapack',              when='+lapack')
     depends_on('suite-sparse',        when='+klu')

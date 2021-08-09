@@ -76,7 +76,7 @@ class VtkM(CMakePackage, CudaPackage):
     depends_on("mpi", when="+mpi")
 
     for amdgpu_value in amdgpu_targets:
-        depends_on("kokkos@develop +rocm amdgpu_target=%s" % amdgpu_value, when="amdgpu_target=%s" % amdgpu_value)
+        depends_on("kokkos@3.4.00: +rocm amdgpu_target=%s" % amdgpu_value, when="amdgpu_target=%s" % amdgpu_value)
 
     depends_on("rocm-cmake@3.7:", when="+hip")
     depends_on("hip@3.7:", when="+hip")
