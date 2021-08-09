@@ -74,7 +74,7 @@ class Magma(CMakePackage, CudaPackage):
         options += ['-DBUILD_SHARED_LIBS=%s' %
                     ('ON' if ('+shared' in spec) else 'OFF')]
 
-        if spec.satisfies('%cce'):
+        if spec.satisfies('%cce') or spec.satisfies('%nvhpc'):
             options += ['-DCUDA_NVCC_FLAGS=-allow-unsupported-compiler']
 
         if '+fortran' in spec:
