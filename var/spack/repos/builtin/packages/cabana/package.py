@@ -31,7 +31,7 @@ class Cabana(CMakePackage):
     depends_on("kokkos-legacy+cuda", when="@:0.2.0+cuda")
     depends_on("kokkos@3.1:+serial", when="@0.3.0:+serial")
     depends_on("kokkos@3.1:+openmp", when="@0.3.0:+openmp")
-    depends_on("kokkos@3.1:+cuda", when="@0.3.0:+cuda")
+    depends_on("kokkos@3.1:+cuda+cuda_lambda", when="@0.3.0:+cuda")
     depends_on('mpi', when='+mpi')
 
     def cmake_args(self):
