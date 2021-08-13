@@ -57,7 +57,8 @@ class Blaspp(CMakePackage, CudaPackage, ROCmPackage):
             '-Duse_openmp=%s'        % ('+openmp' in spec),
             '-DBUILD_SHARED_LIBS=%s' % ('+shared' in spec),
             backend_config,
-            '-DBLAS_LIBRARIES=%s'    % spec['blas'].libs.joined(';')
+            '-Duse_cmake_find_blas=YES',
+            '-DBLAS_LIBRARIES=%s' % spec['blas'].libs.ld_flags + (' -lgfortran' if spec.satisfies('%gcc') else ''),
         ]
 
     def check(self):

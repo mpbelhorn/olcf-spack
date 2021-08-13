@@ -45,9 +45,15 @@ class Lapackpp(CMakePackage):
     def cmake_args(self):
         spec = self.spec
         return [
+            # '-DCMAKE_MESSAGE_LOG_LEVEL=TRACE',
             '-DBUILD_SHARED_LIBS=%s' % ('+shared' in spec),
             '-Dbuild_tests=%s'       % self.run_tests,
-            '-DLAPACK_LIBRARIES=%s'  % spec['lapack'].libs.joined(';')
+            '-Duse_cmake_find_lapack=YES',
+            '-DBLA_VENDOR=%s' % 'OpenBLAS' if spec.satisfies('^openblas') else '',
+            '-DLAPACK_LIBRARIES=%s'  % spec['lapack'].libs.joined(';'),
+            '-DBLAS_LIBRARIES=%s'  % spec['blas'].libs.joined(';'),
+            '-DCMAKE_CXX_FLAGS=%s' % '-DLAPACK_FORTRAN_ADD_' if spec.satisfies('%gcc') else '',
+            # '-DLAPACK_LIBRARIES=%s' % spec['lapack'].headers.cpp_flags + ' ' + spec['lapack'].libs.ld_flags + (' -lgfortran' if spec.satisfies('%gcc') else ''),
         ]
 
     def check(self):
