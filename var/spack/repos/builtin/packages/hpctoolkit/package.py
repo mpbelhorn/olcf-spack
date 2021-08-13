@@ -121,13 +121,14 @@ class Hpctoolkit(AutotoolsPackage):
         # FIXME: Add a build-time dependency on python or patch the file in
         # accordance with which of python2/python3 is available in the sysroot
         # if `python` is not in the PATH.
-        if not os.path.exists('/usr/bin/python'):
-            filter_file(
-                    r'#!/usr/bin/env python',
-                    r'#!/usr/bin/env python3',
-                    'src/tool/hpcstruct/stringify.py',
-                    string=True
-                    )
+        if os.path.exists('src/tool/hpcstruct/stringify.py'):
+            if not os.path.exists('/usr/bin/python'):
+                filter_file(
+                        r'#!/usr/bin/env python',
+                        r'#!/usr/bin/env python3',
+                        'src/tool/hpcstruct/stringify.py',
+                        string=True
+                        )
 
     flag_handler = AutotoolsPackage.build_system_flags
 
