@@ -13,7 +13,7 @@ class GdkPixbuf(Package):
        GTK+ 2 but it was split off into a separate package in
        preparation for the change to GTK+ 3."""
 
-    homepage = "https://developer.gnome.org/gdk-pixbuf/"
+    homepage = "https://gitlab.gnome.org/GNOME/gdk-pixbuf"
     url      = "https://ftp.acc.umu.se/pub/gnome/sources/gdk-pixbuf/2.40/gdk-pixbuf-2.40.0.tar.xz"
     list_url = "https://ftp.acc.umu.se/pub/gnome/sources/gdk-pixbuf/"
     list_depth = 1
@@ -49,7 +49,9 @@ class GdkPixbuf(Package):
 
     # Replace the docbook stylesheet URL with the one that our
     # docbook-xsl package uses/recognizes.
-    patch('docbook-cdn.patch', when='+man')
+    # Pach modifies meson build files, so it only applies to versions that
+    # depend on meson.
+    patch('docbook-cdn.patch', when='@2.37.0:+man')
 
     def url_for_version(self, version):
         url = "https://ftp.acc.umu.se/pub/gnome/sources/gdk-pixbuf/{0}/gdk-pixbuf-{1}.tar.xz"
