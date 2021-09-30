@@ -22,6 +22,7 @@ _craype_name_to_target_name = {
     'x86-cascadelake': 'cascadelake',
     'x86-naples': 'zen',
     'x86-rome': 'zen2',
+    'x86-trento': 'zen3',
     'x86-skylake': 'skylake_avx512',
     'mic-knl': 'mic_knl',
     'interlagos': 'bulldozer',
