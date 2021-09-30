@@ -100,6 +100,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "bulldozer": "",
         "piledriver": "",
         "zen2": "ZEN2",
+        "zen3": "ZEN2",
         "steamroller": "KAVERI",
         "excavator": "CARIZO",
         "a64fx": "",
@@ -249,7 +250,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
                     kokkos_arch_name = self.spack_cuda_arch_map[cuda_arch]
                     spack_microarches.append(kokkos_arch_name)
 
-        kokkos_microarch_name = self.spack_micro_arch_map[spec.target.name]
+        kokkos_microarch_name = self.spack_micro_arch_map.get(spec.target.name)
         if kokkos_microarch_name:
             spack_microarches.append(kokkos_microarch_name)
 

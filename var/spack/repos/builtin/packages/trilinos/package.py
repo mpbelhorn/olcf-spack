@@ -799,10 +799,12 @@ class Trilinos(CMakePackage, CudaPackage):
 
         options.append(self.define_from_variant('TPL_ENABLE_ADIOS2', 'adios2'))
 
-        options.append(define(
-            "Kokkos_ARCH_" +
-            Kokkos.spack_micro_arch_map[spec.target.name].upper(),
-            True))
+        kokkos_arch_name = Kokkos.spack_micro_arch_map.get(spec.target.name)
+        if kokkos_arch_name is not None:
+            options.append(define(
+                "Kokkos_ARCH_" +
+                kokkos_arch_name.upper(),
+                True))
 
         # ################# Miscellaneous Stuff ######################
         # CUDA
