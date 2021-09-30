@@ -12,18 +12,25 @@ class Cmake(Package):
     """
     homepage = 'https://www.cmake.org'
     url = 'https://github.com/Kitware/CMake/releases/download/v3.19.0/cmake-3.19.0.tar.gz'
+    git = 'https://gitlab.kitware.com/cmake/cmake.git'
     maintainers = ['chuckatkins']
 
     tags = ['build-tools']
 
     executables = ['^cmake$']
 
+    version('master',  branch='master')
+    version('3.21.3',   sha256='d14d06df4265134ee42c4d50f5a60cb8b471b7b6a47da8e5d914d49dd783794f')
+    version('3.21.2',   sha256='94275e0b61c84bb42710f5320a23c6dcb2c6ee032ae7d2a616f53f68b3d21659')
     version('3.21.2-dev',
             commit='aedfe6c9234a130596549332560c97d59deab71c',
             git='https://gitlab.kitware.com/cmake/cmake')
-    version('3.20.2',
-            sha256='aecf6ecb975179eb3bb6a4a50cae192d41e92b9372b02300f9e8f1d5f559544e',
-            preferred=True)
+    version('3.21.1',   sha256='fac3915171d4dff25913975d712f76e69aef44bf738ba7b976793a458b4cfed4')
+    version('3.21.0',   sha256='4a42d56449a51f4d3809ab4d3b61fd4a96a469e56266e896ce1009b5768bd2ab')
+    version('3.20.5',   sha256='12c8040ef5c6f1bc5b8868cede16bb7926c18980f59779e299ab52cbc6f15bb0')
+    version('3.20.4',   sha256='87a4060298f2c6bb09d479de1400bc78195a5b55a65622a7dceeb3d1090a1b16')
+    version('3.20.3',   sha256='4d008ac3461e271fcfac26a05936f77fc7ab64402156fb371d41284851a651b8')
+    version('3.20.2',   sha256='aecf6ecb975179eb3bb6a4a50cae192d41e92b9372b02300f9e8f1d5f559544e')
     version('3.20.1',   sha256='3f1808b9b00281df06c91dd7a021d7f52f724101000da7985a401678dfe035b0')
     version('3.20.0',   sha256='9c06b2ddf7c337e31d8201f6ebcd3bba86a9a033976a9aee207fe0c6971f4755')
     version('3.19.8',   sha256='09b4fa4837aae55c75fb170f6a6e2b44818deba48335d1969deddfbb34e30369')
@@ -137,15 +144,14 @@ class Cmake(Package):
     variant('ownlibs', default=True,  description='Use CMake-provided third-party libraries')
     variant('qt',      default=False, description='Enables the build of cmake-gui')
     variant('doc',     default=False, description='Enables the generation of html and man page documentation')
-    variant('openssl', default=True,  description="Enables CMake's OpenSSL features")
+    variant('openssl', default=True,  description="Enable openssl for curl bootstrapped by CMake when using +ownlibs")
     variant('ncurses', default=True,  description='Enables the build of the ncurses gui')
 
-    # Does not compile and is not covered in upstream CI (yet).
-    conflicts('%gcc platform=darwin',
-              msg='CMake does not compile with GCC on macOS yet, '
-                  'please use %apple-clang. '
+    # See https://gitlab.kitware.com/cmake/cmake/-/issues/21135
+    conflicts('%gcc platform=darwin', when='@:3.17',
+              msg='CMake <3.18 does not compile with GCC on macOS, '
+                  'please use %apple-clang or a newer CMake release. '
                   'See: https://gitlab.kitware.com/cmake/cmake/-/issues/21135')
-
     conflicts('%nvhpc')
 
     # Really this should conflict since it's enabling or disabling openssl for
@@ -169,8 +175,8 @@ class Cmake(Package):
     depends_on('qt',             when='+qt')
     depends_on('python@2.7.11:', when='+doc', type='build')
     depends_on('py-sphinx',      when='+doc', type='build')
-    depends_on('openssl', when='+openssl')
-    depends_on('openssl@:1.0.99', when='@:3.6.9+openssl')
+    depends_on('openssl', when='+openssl+ownlibs')
+    depends_on('openssl@:1.0.99', when='@:3.6.9+openssl+ownlibs')
     depends_on('ncurses',        when='+ncurses')
 
     # Cannot build with Intel, should be fixed in 3.6.2
@@ -234,8 +240,6 @@ class Cmake(Package):
     def bootstrap_args(self):
         spec = self.spec
         args = [
-            'CFLAGS=-O3',
-            'CXXFLAGS=-O3',
             '--prefix={0}'.format(self.prefix),
             '--parallel={0}'.format(make_jobs)
         ]
@@ -275,6 +279,8 @@ class Cmake(Package):
         # enable / disable oepnssl
         if '+ownlibs' in spec:
             args.append('-DCMAKE_USE_OPENSSL=%s' % str('+openssl' in spec))
+
+        args.append('-DBUILD_CursesDialog=%s' % str('+ncurses' in spec))
 
         return args
 
