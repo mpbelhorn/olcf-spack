@@ -123,6 +123,8 @@ class Scorep(AutotoolsPackage):
             config_args.append('--with-mpi=mpich3')
         elif spec.satisfies('^openmpi'):
             config_args.append('--with-mpi=openmpi')
+        elif spec.satisfies('^spectrum-mpi'):
+            config_args.append('--with-mpi=spectrum')
 
         config_args.extend([
             'CFLAGS={0}'.format(self.compiler.cc_pic_flag),

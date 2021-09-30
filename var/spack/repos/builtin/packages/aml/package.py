@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 from spack import *
 
 
@@ -22,3 +23,18 @@ class Aml(AutotoolsPackage):
     depends_on('autoconf', type='build')
     depends_on('automake', type='build')
     depends_on('libtool', type='build')
+
+    def patch(self):
+        if os.path.exists('doc/Makefile.in'):
+            filter_file(
+                    r'mkdir -p $(DATA_INSTALL_DIR)',
+                    r'mkdir -p $(DATA_INSTALL_DIR)/html',
+                    'doc/Makefile.in',
+                    string=True
+                    )
+            filter_file(
+                    r'cp -r $(SPHINX_BUILD_DIR) $(DATA_INSTALL_DIR)/html;',
+                    r'mkdir -p $(DATA_INSTALL_DIR)/html && cp -r $(SPHINX_BUILD_DIR) $(DATA_INSTALL_DIR)/html;',
+                    'doc/Makefile.in',
+                    string=True
+                    )

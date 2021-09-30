@@ -277,6 +277,8 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
             archs = spec.variants['cuda_arch'].value
             if archs != 'none':
                 arch_str = ",".join(archs)
+                sm_str = ','.join(['sm_%s' % i for i in archs])
+                args.append('-DCUDA_ARCH=%s' % sm_str)
             args.append('-DCMAKE_CUDA_ARCHITECTURES=%s' % arch_str)
         else:
             args.append('-DCUDA_ENABLE=OFF')

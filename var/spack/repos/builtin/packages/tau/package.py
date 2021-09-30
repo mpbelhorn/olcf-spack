@@ -104,6 +104,7 @@ class Tau(Package):
     depends_on('adios2', when='+adios2')
     depends_on('sqlite', when='+sqlite')
     depends_on('hwloc')
+    depends_on('cmake@2.28:', when='+ompt', type=('build'))
 
     # Elf only required from 2.28.1 on
     conflicts('+elf', when='@:2.28.0')

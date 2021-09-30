@@ -275,8 +275,16 @@ class Conduit(CMakePackage):
         if self.compiler.fc:
             # even if this is set, it may not exist
             # do one more sanity check
-            if os.path.isfile(env["SPACK_FC"]):
+            _fc = which(env["SPACK_FC"])
+            _err = 'Fortran support requested but "$SPACK_FC=%s" not found!' % env["SPACK_FC"]
+            if _fc is None:
+                raise PackageError(_err)
+            _fc_path = _fc.path or '/'
+            if os.path.isfile(_fc_path):
                 f_compiler  = env["SPACK_FC"]
+            else:
+                raise PackageError(_err)
+
 
         #######################################################################
         # Directly fetch the names of the actual compilers to create a

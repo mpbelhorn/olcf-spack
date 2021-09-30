@@ -136,6 +136,12 @@ class Adios(AutotoolsPackage):
         if self.spec.satisfies('%gcc@10: +fortran'):
             env.set('FCFLAGS', '-fallow-argument-mismatch')
 
+    def with_or_without_netcdf(self, activated):
+        opt = 'netcdf'
+        if not activated:
+            return '--without-{0}'.format(opt)
+        return '--with-{0}={1}'.format(opt, self.spec['netcdf-c'].prefix)
+
     def configure_args(self):
         spec = self.spec
         self.validate(spec)
