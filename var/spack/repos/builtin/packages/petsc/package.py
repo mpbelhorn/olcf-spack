@@ -310,9 +310,12 @@ class Petsc(Package):
                    '--download-c2html=0',
                    '--download-sowing=0',
                    '--download-hwloc=0',
-                   'CFLAGS=%s' % ' '.join(spec.compiler_flags['cflags']),
-                   'FFLAGS=%s' % ' '.join(spec.compiler_flags['fflags']),
-                   'CXXFLAGS=%s' % ' '.join(spec.compiler_flags['cxxflags'])]
+                   'CFLAGS=%s' % ' '.join(spec.compiler_flags['cflags'] +
+                                          [self.compiler.cc_pic_flag]),
+                   'FFLAGS=%s' % ' '.join(spec.compiler_flags['fflags'] +
+                                          [self.compiler.fc_pic_flag]),
+                   'CXXFLAGS=%s' % ' '.join(spec.compiler_flags['cxxflags'] +
+                                            [self.compiler.cxx_pic_flag])]
         options.extend(self.mpi_dependent_options())
         options.extend([
             '--with-precision=%s' % (
