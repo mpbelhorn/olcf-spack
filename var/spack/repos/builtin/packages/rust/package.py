@@ -68,7 +68,7 @@ class Rust(Package):
     depends_on('ninja', when='@1.48.0:', type='build')
     depends_on('pkgconfig', type='build')
     # TODO: openssl@3.x should be supported in later versions
-    depends_on('openssl@:1')
+    depends_on('openssl@:1.999')
     depends_on('libssh2')
     depends_on('libgit2')
 

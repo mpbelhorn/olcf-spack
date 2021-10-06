@@ -24,10 +24,6 @@ class Diffutils(AutotoolsPackage, GNUMirrorPackage):
     build_directory = 'spack-build'
 
     patch('nvhpc.patch', when='@3.7 %nvhpc')
-    depends_on('m4', when='%cce@12:')
-    depends_on('autoconf', when='%cce@12:')
-    depends_on('automake', when='%cce@12:')
-    depends_on('libtool', when='%cce@12:')
 
     depends_on('iconv')
 

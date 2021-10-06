@@ -39,6 +39,7 @@ class Variorum(CMakePackage):
     ########################
     depends_on("cmake@2.8:", type="build")
     depends_on("hwloc")
+    depends_on("jansson")
 
     #########################
     # Documentation related #
