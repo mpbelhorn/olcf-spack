@@ -339,7 +339,10 @@ class Legion(CMakePackage):
     def cache_test_sources(self):
         """Copy the example source files after the package is installed to an
         install test subdirectory for use during `spack test run`."""
-        self.cache_extra_test_sources([join_path('examples', 'local_function_tasks')])
+        try:
+            self.cache_extra_test_sources([join_path('examples', 'local_function_tasks')])
+        except OSError as err:
+            pass
 
     def run_local_function_tasks_test(self):
         """Run stand alone test: local_function_tasks"""
