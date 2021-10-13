@@ -109,7 +109,7 @@ class Axom(CachedCMakePackage, CudaPackage):
 
     depends_on("umpire~openmp", when="+umpire~openmp")
     depends_on("umpire+openmp", when="+umpire+openmp")
-    depends_on("umpire+cuda", when="+umpire+cuda")
+    depends_on("umpire+cuda~shared", when="+umpire+cuda")
 
     for sm_ in CudaPackage.cuda_arch_values:
         depends_on('raja cuda_arch={0}'.format(sm_),
