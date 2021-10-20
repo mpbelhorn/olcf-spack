@@ -114,7 +114,8 @@ class Scorep(AutotoolsPackage):
             config_args.append("--with-libunwind=%s" %
                                spec['libunwind'].prefix)
 
-        config_args += self.with_or_without('shmem')
+        if spec.satisfies('~shmem'):
+            config_args += self.with_or_without('shmem')
         config_args += self.with_or_without('mpi')
 
         if spec.satisfies('^intel-mpi'):
