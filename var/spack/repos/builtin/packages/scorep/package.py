@@ -93,6 +93,8 @@ class Scorep(AutotoolsPackage):
             "--enable-shared"]
 
         cname = spec.compiler.name
+        if cname == 'nvhpc':
+            cname = 'pgi'
         config_args.append('--with-nocross-compiler-suite={0}'.format(cname))
 
         if self.version >= Version('4.0'):
