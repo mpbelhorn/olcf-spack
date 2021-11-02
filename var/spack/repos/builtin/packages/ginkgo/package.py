@@ -131,7 +131,7 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     def setup_build_tests(self):
         """Build and install the smoke tests."""
         # For now only 1.4.0 and later releases support this scheme.
-        if self.spec.satisfies('@:1.3.0') or self.spec.satisfies('%cce'):
+        if self.spec.satisfies('@:1.3.0') or self.spec.satisfies('+rocm'):
             return
         with working_dir(self.build_directory):
             make("test_install")
@@ -142,7 +142,7 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     def test(self):
         """Run the smoke tests."""
         # For now only 1.4.0 and later releases support this scheme.
-        if self.spec.satisfies('@:1.3.0') or self.spec.satisfies('%cce'):
+        if self.spec.satisfies('@:1.3.0') or self.spec.satisfies('+rocm'):
             print("SKIPPED: smoke tests not supported with this Ginkgo version.")
             return
         files = [('test_install', [r'REFERENCE',
