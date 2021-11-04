@@ -1302,8 +1302,11 @@ class Database(object):
         the given spec
         """
         for spec in self.query():
-            if spec.package.extends(extendee_spec):
-                yield spec.package
+            try:
+                if spec.package.extends(extendee_spec):
+                    yield spec.package
+            except spack.repo.UnknownPackageError as err:
+                continue
 
     @_autospec
     def activated_extensions_for(self, extendee_spec, extensions_layout=None):
