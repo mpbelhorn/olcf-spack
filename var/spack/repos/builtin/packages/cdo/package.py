@@ -17,10 +17,10 @@ class Cdo(AutotoolsPackage):
 
     maintainers = ['skosukhin']
 
+    version('1.9.10', sha256='cc39c89bbb481d7b3945a06c56a8492047235f46ac363c4f0d980fccdde6677e', url='https://code.mpimet.mpg.de/attachments/download/24638/cdo-1.9.10.tar.gz')
     version('1.9.9', sha256='959b5b58f495d521a7fd1daa84644888ec87d6a0df43f22ad950d17aee5ba98d', url='https://code.mpimet.mpg.de/attachments/download/23323/cdo-1.9.9.tar.gz')
     version('1.9.8', sha256='f2660ac6f8bf3fa071cf2a3a196b3ec75ad007deb3a782455e80f28680c5252a', url='https://code.mpimet.mpg.de/attachments/download/20826/cdo-1.9.8.tar.gz')
-    version('1.9.7.1', sha256='3771952e065bcf935d43e492707370ed2a0ecb59a06bea24f9ab69d77943962c',
-            url='https://code.mpimet.mpg.de/attachments/download/20124/cdo-1.9.7.1.tar.gz')
+    version('1.9.7.1', sha256='3771952e065bcf935d43e492707370ed2a0ecb59a06bea24f9ab69d77943962c', url='https://code.mpimet.mpg.de/attachments/download/20124/cdo-1.9.7.1.tar.gz')
     version('1.9.6', sha256='b31474c94548d21393758caa33f35cf7f423d5dfc84562ad80a2bdcb725b5585', url='https://code.mpimet.mpg.de/attachments/download/19299/cdo-1.9.6.tar.gz')
     version('1.9.5', sha256='48ed65cc5b436753c8e7f9eadd8aa97376698ce230ceafed2a4350a5b1a27148', url='https://code.mpimet.mpg.de/attachments/download/18264/cdo-1.9.5.tar.gz')
     version('1.9.4', sha256='3d1c0fd3f7d38c5d3d88139ca1546c9d24e1b1ff752a794a4194dfe624695def', url='https://code.mpimet.mpg.de/attachments/download/17374/cdo-1.9.4.tar.gz')
@@ -39,6 +39,8 @@ class Cdo(AutotoolsPackage):
                         'GRIB2 backend for GRIB1 files')
     variant('szip', default=True,
             description='Enable szip compression for GRIB1')
+    variant('aec', default=False,
+            description='Use libaec compression for GRIB1 instead of szip')
     variant('hdf5', default=True, description='Enable HDF5 support')
 
     variant('udunits2', default=True, description='Enable UDUNITS2 support')
@@ -60,8 +62,10 @@ class Cdo(AutotoolsPackage):
 
     depends_on('grib-api', when='grib2=grib-api')
     depends_on('eccodes', when='grib2=eccodes')
+    depends_on('eccodes+aec', when='+aec grib2=eccodes')
 
     depends_on('szip', when='+szip')
+    depends_on('libaec', when='+aec')
 
     depends_on('hdf5+threadsafe', when='+hdf5')
 
@@ -76,6 +80,10 @@ class Cdo(AutotoolsPackage):
     conflicts('grib2=eccodes', when='@:1.8',
               msg='Eccodes is supported starting version 1.9.0')
     conflicts('+szip', when='+external-grib1 grib2=none',
+              msg='The configuration does not support GRIB1')
+    conflicts('+szip', when='+aec',
+              msg='Must use only one of +szip or +aec')
+    conflicts('+aec', when='+external-grib1 grib2=none',
               msg='The configuration does not support GRIB1')
     conflicts('%gcc@9:', when='@:1.9.6',
               msg='GCC 9 changed OpenMP data sharing behavior')
@@ -106,6 +114,8 @@ class Cdo(AutotoolsPackage):
 
         if '+szip' in self.spec:
             config_args.append('--with-szlib=' + self.spec['szip'].prefix)
+        elif '+aec' in self.spec:
+            config_args.append('--with-szlib=' + self.spec['libaec'].prefix)
         else:
             config_args.append('--without-szlib')
 
