@@ -32,6 +32,9 @@ _craype_name_to_target_name = {
 }
 
 
+_default_backend_target = None
+
+
 def _target_name_from_craype_target_name(name):
     return _craype_name_to_target_name.get(name, name)
 
@@ -56,8 +59,10 @@ class Cray(Platform):
             name = _target_name_from_craype_target_name(target)
             self.add_target(name, spack.target.Target(name, 'craype-%s' % target))
 
-        self.back_end = os.environ.get('SPACK_BACK_END',
-                                       self._default_target_from_env())
+        _back_end = os.environ.get('SPACK_BACK_END', _default_backend_target)
+        if _back_end is None:
+            _back_end = self._default_target_from_env()
+        self.back_end = _back_end
         self.default = self.back_end
         if self.back_end not in self.targets:
             # We didn't find a target module for the backend
@@ -137,6 +142,7 @@ class Cray(Platform):
         loaded modules is parsed for the first acceptable CrayPE target.
         '''
         # env -i /bin/bash -lc echo $CRAY_CPU_TARGET 2> /dev/null
+        target = None
         if getattr(self, 'default', None) is None:
             bash = Executable('/bin/bash')
             output = bash(
@@ -147,7 +153,7 @@ class Cray(Platform):
             default_from_module = ''.join(output.split())  # rm all whitespace
             if default_from_module:
                 tty.debug("Found default module:%s" % default_from_module)
-                return default_from_module
+                target = default_from_module
             else:
                 front_end = archspec.cpu.host().name
                 if front_end in list(
@@ -155,9 +161,12 @@ class Cray(Platform):
                             self._avail_targets())
                 ):
                     tty.debug("default to front-end architecture")
-                    return archspec.cpu.host().name
+                    target = archspec.cpu.host().name 
                 else:
-                    return platform.machine()
+                    target = platform.machine()
+            if target is not None:
+                _default_backend_target = target
+        return target
 
     def _avail_targets(self):
         '''Return a list of available CrayPE CPU targets.'''
