@@ -211,7 +211,8 @@ class Boost(Package):
     patch('boost_11856.patch', when='@1.60.0%gcc@4.4.7')
 
     # Patch fix from https://svn.boost.org/trac/boost/ticket/11120
-    patch('python_jam.patch', when='@1.56.0: ^python@3:')
+    patch('python_jam-1_77.patch',   when='@1.77:     ^python@3:')
+    patch('python_jam.patch',        when='@1.56:1.76 ^python@3:')
     patch('python_jam_pre156.patch', when='@:1.55.0 ^python@3:')
 
     # Patch fix for IBM XL compiler
@@ -238,6 +239,10 @@ class Boost(Package):
     # See: https://github.com/macports/macports-ports/pull/6726
     patch('darwin_clang_version.patch', level=0,
           when='@1.56.0:1.72.0 platform=darwin')
+
+    # Fix missing declaration of uintptr_t with glibc>=2.17 - https://bugs.gentoo.org/482372
+    patch('https://482372.bugs.gentoo.org/attachment.cgi?id=356970', when='@1.53.0:1.54',
+          sha256='b6f6ce68282159d46c716a1e6c819c815914bdb096cddc516fa48134209659f2')
 
     # Fix: "Unable to compile code using boost/process.hpp"
     # See: https://github.com/boostorg/process/issues/116
@@ -316,6 +321,8 @@ class Boost(Package):
 
             filter_file('-fast', '-O1', 'tools/build/src/tools/pgi.jam')
             filter_file('-fast', '-O1', 'tools/build/src/engine/build.sh')
+        if self.spec.satisfies('@1.77.0%intel'):
+            filter_file(' -static', '', 'tools/build/src/engine/build.sh')
 
     def url_for_version(self, version):
         if version >= Version('1.63.0'):
@@ -328,6 +335,7 @@ class Boost(Package):
     def determine_toolset(self, spec):
         toolsets = {'g++': 'gcc',
                     'icpc': 'intel',
+                    'icpx': 'intel',
                     'clang++': 'clang',
                     'armclang++': 'clang',
                     'xlc++': 'xlcpp',
@@ -338,6 +346,8 @@ class Boost(Package):
 
         if spec.satisfies('@1.47:'):
             toolsets['icpc'] += '-linux'
+            toolsets['icpx'] += '-linux'
+
         for cc, toolset in toolsets.items():
             if cc in self.compiler.cxx_names:
                 return toolset
@@ -378,14 +388,8 @@ class Boost(Package):
         with open('user-config.jam', 'w') as f:
             # Boost may end up using gcc even though clang+gfortran is set in
             # compilers.yaml. Make sure this does not happen:
-            if not spec.satisfies('%intel'):
-                # using intel-linux : : spack_cxx in user-config.jam leads to
-                # error: at project-config.jam:12
-                # error: duplicate initialization of intel-linux with the following parameters:  # noqa
-                # error: version = <unspecified>
-                # error: previous initialization at ./user-config.jam:1
-                f.write("using {0} : : {1} ;\n".format(boost_toolset_id,
-                                                       spack_cxx))
+            f.write("using {0} : : {1} ;\n".format(boost_toolset_id,
+                                                   spack_cxx))
 
             if '+mpi' in spec:
                 # Use the correct mpi compiler.  If the compiler options are
@@ -566,6 +570,11 @@ class Boost(Package):
         self.determine_bootstrap_options(spec, with_libs, bootstrap_options)
 
         bootstrap(*bootstrap_options)
+
+        # strip the toolchain to avoid double include errors (intel) or
+        # user-config being overwritten (again intel, but different boost version)
+        filter_file(r'^\s*using {0}.*'.format(self.determine_toolset(spec)),  '',
+                    os.path.join(self.stage.source_path, 'project-config.jam'))
 
         # b2 used to be called bjam, before 1.47 (sigh)
         b2name = './b2' if spec.satisfies('@1.47:') else './bjam'
