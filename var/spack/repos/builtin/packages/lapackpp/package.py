@@ -53,7 +53,7 @@ class Lapackpp(CMakePackage):
             '-DBLA_VENDOR=%s' % 'OpenBLAS' if spec.satisfies('^openblas') else '',
             '-DLAPACK_LIBRARIES=%s'  % spec['lapack'].libs.joined(';'),
             '-DBLAS_LIBRARIES=%s'  % spec['blas'].libs.joined(';'),
-            '-DCMAKE_CXX_FLAGS=%s' % '-DLAPACK_FORTRAN_ADD_' if spec.satisfies('%gcc') else '',
+            '-DCMAKE_CXX_FLAGS=%s' % '-DLAPACK_FORTRAN_ADD_' if self.compiler.fc.endswith('gfortran') else '',
             # '-DLAPACK_LIBRARIES=%s' % spec['lapack'].headers.cpp_flags + ' ' + spec['lapack'].libs.ld_flags + (' -lgfortran' if spec.satisfies('%gcc') else ''),
         ]
 
