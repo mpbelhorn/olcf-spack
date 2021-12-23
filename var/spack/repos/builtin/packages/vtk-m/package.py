@@ -64,7 +64,7 @@ class VtkM(CMakePackage, CudaPackage):
     # it doesn't look like spack has an amd gpu abstraction
     # Going to have to restrict our set to ones that Kokkos supports
     amdgpu_targets = (
-        'gfx900', 'gfx906', 'gfx908'
+        'gfx900', 'gfx906', 'gfx908', 'gfx90a'
     )
 
     variant('amdgpu_target', default='none', multi=True, values=('none',) + amdgpu_targets)
