@@ -134,9 +134,9 @@ class Ncl(Package):
         env.set('NCARG_ROOT', self.spec.prefix)
 
     def prepare_site_config(self):
-        fc_flags = []
-        cc_flags = []
-        c2f_flags = []
+        fc_flags = [self.compiler.fc_pic_flag]
+        cc_flags = [self.compiler.cc_pic_flag]
+        c2f_flags = [self.compiler.cc_pic_flag]
 
         if '+openmp' in self.spec:
             fc_flags.append(self.compiler.openmp_flag)
@@ -162,6 +162,8 @@ class Ncl(Package):
                 '#define CppCommand \'/usr/bin/env cpp -traditional\'\n',
                 '#define CCompiler cc\n',
                 '#define FCompiler fc\n',
+                '#define Cstatic\n',
+                '#define Cdynamic\n',
                 ('#define CtoFLibraries ' + ' '.join(c2f_flags) + '\n'
                  if len(c2f_flags) > 0
                  else ''),
@@ -173,6 +175,9 @@ class Ncl(Package):
                  else ''),
                 ('#define FcOptions ' + ' '.join(fc_flags) + '\n'
                  if len(fc_flags) > 0
+                 else ''),
+                ('#define ExtraExportFlags -rdynamic\n'
+                 if self.spec.satisfies('%gcc')
                  else ''),
                 '#define BuildShared NO'
             ])
