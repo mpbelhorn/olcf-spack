@@ -371,7 +371,7 @@ class Boost(Package):
         boost_toolset_id = self.determine_toolset(spec)
 
         # Arm compiler bootstraps with 'gcc' (but builds as 'clang')
-        if spec.satisfies('%arm') or spec.satisfies('%fj'):
+        if spec.satisfies('%arm') or spec.satisfies('%fj') or spec.satisfies('%clang platform=cray'):
             options.append('--with-toolset=gcc')
         else:
             options.append('--with-toolset=%s' % boost_toolset_id)
