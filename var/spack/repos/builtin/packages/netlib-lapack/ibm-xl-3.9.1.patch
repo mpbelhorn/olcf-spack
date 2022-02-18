@@ -39,9 +39,8 @@ diff -Naur a/CMakeLists.txt b/CMakeLists.txt
 +  string(REGEX MATCH "-Mrecursive" output_test <string> "${CMAKE_Fortran_FLAGS}")
    if(NOT output_test)
 -    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -recursive"
--      CACHE STRING "Recursive flag must be set" FORCE)
 +    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Mrecursive"
-+    CACHE STRING "Recursive flag must be set" FORCE)
+       CACHE STRING "Recursive flag must be set" FORCE)
    endif()
  elseif(_frecursiveFlag)
    string(REGEX MATCH "-frecursive" output_test <string> "${CMAKE_Fortran_FLAGS}")
