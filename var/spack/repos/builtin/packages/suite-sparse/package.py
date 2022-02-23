@@ -65,7 +65,7 @@ class SuiteSparse(Package):
     # CUDA-11 dropped sm_30 code generation, remove hardcoded sm_30 from makefile
     # open issue: https://github.com/DrTimothyAldenDavis/SuiteSparse/issues/56
     # Tested only with 5.9.0, previous versions probably work too
-    patch('fix_cuda11.patch', when='@5.9.0:+cuda ^cuda@11:')
+    patch('fix_cuda11.patch', when='@5.9.0:5.10.0+cuda ^cuda@11:')
 
     conflicts('%gcc@:4.8', when='@5.2.0:', msg='gcc version must be at least 4.9 for suite-sparse@5.2.0:')
 
