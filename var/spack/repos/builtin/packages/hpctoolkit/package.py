@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 import llnl.util.tty as tty
 
 from spack import *
@@ -134,6 +135,19 @@ class Hpctoolkit(AutotoolsPackage):
     patch('https://github.com/HPCToolkit/hpctoolkit/commit/511afd95b01d743edc5940c84e0079f462b2c23e.patch',
           sha256='fd0fd7419f66a1feba8046cff9df7f27abce8629ee2708b8a9daa12c1b51243c',
           when='@2019.08.01:2021.03 %gcc@11.0:')
+
+    def patch(self):
+        # FIXME: Add a build-time dependency on python or patch the file in
+        # accordance with which of python2/python3 is available in the sysroot
+        # if `python` is not in the PATH.
+        if os.path.exists('src/tool/hpcstruct/stringify.py'):
+            if not os.path.exists('/usr/bin/python'):
+                filter_file(
+                        r'#!/usr/bin/env python',
+                        r'#!/usr/bin/env python3',
+                        'src/tool/hpcstruct/stringify.py',
+                        string=True
+                        )
 
     flag_handler = AutotoolsPackage.build_system_flags
 
