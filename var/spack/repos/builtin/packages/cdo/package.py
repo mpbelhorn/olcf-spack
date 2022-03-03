@@ -48,6 +48,8 @@ class Cdo(AutotoolsPackage):
                         'GRIB2 backend for GRIB1 files')
     variant('szip', default=True,
             description='Enable szip compression for GRIB1')
+    variant('aec', default=False,
+            description='Use libaec compression for GRIB1 instead of szip')
     variant('hdf5', default=True, description='Enable HDF5 support')
 
     variant('udunits2', default=True, description='Enable UDUNITS2 support')
@@ -71,6 +73,7 @@ class Cdo(AutotoolsPackage):
     depends_on('eccodes', when='grib2=eccodes')
 
     depends_on('szip', when='+szip')
+    depends_on('libaec', when='+aec')
 
     depends_on('hdf5+threadsafe', when='+hdf5')
 
@@ -85,6 +88,10 @@ class Cdo(AutotoolsPackage):
     depends_on('uuid')
 
     conflicts('+szip', when='+external-grib1 grib2=none',
+              msg='The configuration does not support GRIB1')
+    conflicts('+szip', when='+aec',
+              msg='Must use only one of +szip or +aec')
+    conflicts('+aec', when='+external-grib1 grib2=none',
               msg='The configuration does not support GRIB1')
     conflicts('%gcc@9:', when='@:1.9.6',
               msg='GCC 9 changed OpenMP data sharing behavior')
@@ -138,6 +145,8 @@ class Cdo(AutotoolsPackage):
 
         if '+szip' in self.spec:
             config_args.append('--with-szlib=' + yes_or_prefix('szip'))
+        elif '+aec' in self.spec:
+            config_args.append('--with-szlib=' + self.spec['libaec'].prefix)
         else:
             config_args.append('--without-szlib')
 
