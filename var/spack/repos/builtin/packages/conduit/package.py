@@ -363,6 +363,8 @@ class Conduit(CMakePackage):
         if cflags:
             cfg.write(cmake_cache_entry("CMAKE_C_FLAGS", cflags))
         cxxflags = cppflags + ' '.join(spec.compiler_flags['cxxflags'])
+        if spec.satisfies('%gcc@11:'):
+            cxxflags += ' -std=c++11'
         if cxxflags:
             cfg.write(cmake_cache_entry("CMAKE_CXX_FLAGS", cxxflags))
         fflags = ' '.join(spec.compiler_flags['fflags'])
