@@ -63,6 +63,9 @@ class CBlosc(CMakePackage):
                 args.append('-DBUILD_TESTS=OFF')
                 args.append('-DBUILD_BENCHMARKS=OFF')
 
+        if self.spec.satisfies("@1.17.0:%gcc@:4"):
+            args.append("-DCMAKE_C_FLAGS=-std=gnu99")
+
         return args
 
     @run_after('install')
