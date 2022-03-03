@@ -49,6 +49,14 @@ class ScalapackBase(CMakePackage):
           sha256='072b006e485f0ca4cba56096912a986e4d3da73aae51c2205928aa5eb842cefd',
           when='@2.2.0')
 
+    def patch(self):
+        filter_file(
+                r'"${CMAKE_Fortran_COMPILER}" MATCHES "ifort"',
+                r'"${CMAKE_Fortran_COMPILER_ID}" MATCHES "Intel"',
+                "CMakeLists.txt",
+                string=True
+                )
+
     @property
     def libs(self):
         # Note that the default will be to search
