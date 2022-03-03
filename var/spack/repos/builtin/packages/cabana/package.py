@@ -39,7 +39,7 @@ class Cabana(CMakePackage):
     depends_on("cmake@3.9:", type='build')
     depends_on("googletest", type='build')
     _versions = {
-        ":0.2.0": "-legacy",
+        # ":0.2.0": "-legacy",
         "0.3.0": "@3.1:",
         "0.4.0": "@3.2:"
     }
