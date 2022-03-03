@@ -107,6 +107,7 @@ class FftwBase(AutotoolsPackage):
 
     def configure(self, spec, prefix):
         # Base options
+        cflags = []
         options = [
             '--prefix={0}'.format(prefix),
             '--enable-shared',
@@ -123,7 +124,7 @@ class FftwBase(AutotoolsPackage):
             if spec.satisfies('@:2'):
                 # TODO: libtool strips CFLAGS, so 2.x libxfftw_threads
                 #       isn't linked to the openmp library. Patch Makefile?
-                options.insert(0, 'CFLAGS=' + self.compiler.openmp_flag)
+                cflags.append(self.compiler.openmp_flag)
         if '+mpi' in spec:
             options.append('--enable-mpi')
 
@@ -142,6 +143,14 @@ class FftwBase(AutotoolsPackage):
         if spec.satisfies('%nvhpc') or spec.satisfies('%pgi'):
             if 'avx512' in simd_features:
                 simd_features.remove('avx512')
+
+        if spec.satisfies('%xl') or spec.satisfies('%xl_r'):
+            float_simd_features.remove('altivec')
+            cflags.extend(['-O2',
+                           '-qalias=ansi',
+                           '-w',
+                           '-qarch=auto',
+                           '-qtune=auto'])
 
         # NVIDIA compiler does not support Altivec intrinsics
         if spec.satisfies('%nvhpc') and 'vsx' in simd_features:
@@ -162,7 +171,7 @@ class FftwBase(AutotoolsPackage):
         if not any(f in spec.target for f in
                    simd_features + float_simd_features):
             # Workaround NVIDIA compiler bug
-            if not spec.satisfies('%nvhpc'):
+            if not (spec.satisfies('%nvhpc') or spec.satisfies('%pgi')):
                 simd_options += [
                     '--enable-generic-simd128',
                     '--enable-generic-simd256'
@@ -185,6 +194,9 @@ class FftwBase(AutotoolsPackage):
         configure = Executable('../configure')
         for precision in self.selected_precisions:
             opts = (enable_precision[precision] or []) + options[:]
+
+            if cflags:
+                opts.insert(0, 'CFLAGS=' + ' '.join(cflags))
 
             # SIMD optimizations are available only for float and double
             # starting from FFTW 3
