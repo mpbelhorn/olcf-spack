@@ -45,6 +45,14 @@ class ScalapackBase(CMakePackage):
     # See: https://github.com/Reference-ScaLAPACK/scalapack/pull/23
     patch("gcc10-compatibility.patch", when='@2.0.0:2.1.0')
 
+    def patch(self):
+        filter_file(
+                r'"${CMAKE_Fortran_COMPILER}" MATCHES "ifort"',
+                r'"${CMAKE_Fortran_COMPILER_ID}" MATCHES "Intel"',
+                "CMakeLists.txt",
+                string=True
+                )
+
     @property
     def libs(self):
         # Note that the default will be to search
