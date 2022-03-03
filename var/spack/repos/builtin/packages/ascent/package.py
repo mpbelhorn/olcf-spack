@@ -361,6 +361,7 @@ class Ascent(CMakePackage, CudaPackage):
             cfg.write(cmake_cache_entry("ENABLE_TESTS", "ON"))
         else:
             cfg.write(cmake_cache_entry("ENABLE_TESTS", "OFF"))
+            cfg.write(cmake_cache_entry("ENABLE_EXAMPLES", "OFF"))
 
         #######################################################################
         # Core Dependencies
