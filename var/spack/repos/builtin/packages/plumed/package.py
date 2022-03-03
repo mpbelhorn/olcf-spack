@@ -25,6 +25,7 @@ class Plumed(AutotoolsPackage):
     git = 'https://github.com/plumed/plumed2.git'
 
     version('master', branch='master')
+    version('2.7.3', sha256='aa1f6200c2ed351e40ce4391a9590f171532474b30f384feddfab10e36d7e08e')
     version('2.7.2', sha256='c9a31e68d6440828cf186ca43c9e11a5e5c7ad1c96b2b66ed5a5a141fc954373')
     version('2.7.1', sha256='cb8b5735d8dd61980fa6441f3dde3f33544240ae4177da0f529fb5abb355cd4a')
     version('2.7.0', sha256='14450ea566c25ac9bf71fd77bb9c0c95e9038462b5739c73a515be82e2011cd6')
@@ -184,7 +185,7 @@ class Plumed(AutotoolsPackage):
         # Set flags to help find gsl
         if '+gsl' in spec:
             gsl_libs = spec['gsl'].libs
-            blas_libs = spec['blas'].libs
+            blas_libs = spec['blas:c,fortran'].libs
             extra_libs.append(
                 (gsl_libs + blas_libs).ld_flags
             )

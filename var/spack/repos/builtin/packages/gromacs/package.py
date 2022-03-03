@@ -121,6 +121,8 @@ class Gromacs(CMakePackage):
 
     depends_on('plumed+mpi', when='+plumed+mpi')
     depends_on('plumed~mpi', when='+plumed~mpi')
+    depends_on('plumed@2.7.3+mpi', when='@2021.4+plumed+mpi')
+    depends_on('plumed@2.7.3~mpi', when='@2021.4+plumed~mpi')
     depends_on('plumed@2.7.1:2.7.2+mpi', when='@2021+plumed+mpi')
     depends_on('plumed@2.7.1:2.7.2~mpi', when='@2021+plumed~mpi')
     depends_on('plumed@2.7.2+mpi', when='@2020.6+plumed+mpi')
