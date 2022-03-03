@@ -366,6 +366,8 @@ class Boost(Package):
 
             filter_file('-fast', '-O1', 'tools/build/src/tools/pgi.jam')
             filter_file('-fast', '-O1', 'tools/build/src/engine/build.sh')
+        if self.spec.satisfies('@1.77.0%intel'):
+            filter_file(' -static', '', 'tools/build/src/engine/build.sh')
 
         # Fixes https://github.com/spack/spack/issues/29352
         if self.spec.satisfies('@1.78 %intel') or self.spec.satisfies('@1.78 %oneapi'):
@@ -418,7 +420,7 @@ class Boost(Package):
         boost_toolset_id = self.determine_toolset(spec)
 
         # Arm compiler bootstraps with 'gcc' (but builds as 'clang')
-        if spec.satisfies('%arm') or spec.satisfies('%fj'):
+        if spec.satisfies('%arm') or spec.satisfies('%fj') or spec.satisfies('%clang platform=cray'):
             options.append('--with-toolset=gcc')
         else:
             options.append('--with-toolset=%s' % boost_toolset_id)
