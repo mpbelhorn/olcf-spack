@@ -31,6 +31,21 @@ class Aml(AutotoolsPackage):
         depends_on('automake', type='build')
         depends_on('libtool', type='build')
 
+    def patch(self):
+        if os.path.exists('doc/Makefile.in'):
+            filter_file(
+                    r'mkdir -p $(DATA_INSTALL_DIR)',
+                    r'mkdir -p $(DATA_INSTALL_DIR)/html',
+                    'doc/Makefile.in',
+                    string=True
+                    )
+            filter_file(
+                    r'cp -r $(SPHINX_BUILD_DIR) $(DATA_INSTALL_DIR)/html;',
+                    r'mkdir -p $(DATA_INSTALL_DIR)/html && cp -r $(SPHINX_BUILD_DIR) $(DATA_INSTALL_DIR)/html;',
+                    'doc/Makefile.in',
+                    string=True
+                    )
+
     @run_after('install')
     def cache_test_sources(self):
         """Copy the example source files after the package is installed to an
