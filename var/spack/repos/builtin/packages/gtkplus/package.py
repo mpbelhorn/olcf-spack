@@ -88,11 +88,15 @@ class Gtkplus(MesonPackage):
                 '-Dquartz_backend=true',
             ])
 
+        print_backends = ['file', 'lpr']
+        if self.spec.satisfies('+cups'):
+            print_backends.append('cups')
         args.extend([
             '-Dgtk_doc=false',
             '-Dman=false',
             '-Dintrospection=true',
             '-Dwayland_backend=false',
+            '-Dprint_backends=' + ','.join(print_backends),
         ])
 
         return args
