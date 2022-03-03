@@ -826,7 +826,7 @@ def setup_package(pkg, dirty, context='build'):
     # unnecessary
     on_cray, _ = _on_cray()
     if on_cray:
-        module('unload', 'cray-libsci')
+        module('unload', 'cray-libsci', 'cray-mpich')
 
     if target.module_name:
         load_module(target.module_name)
