@@ -34,6 +34,8 @@ class NetcdfFortran(AutotoolsPackage):
 
     depends_on('netcdf-c')
     depends_on('doxygen', when='+doc', type='build')
+    depends_on('hdf5', when="%xl")
+    depends_on('hdf5', when="%xl_r")
 
     # The default libtool.m4 is too old to handle NAG compiler properly:
     # https://github.com/Unidata/netcdf-fortran/issues/94
@@ -88,6 +90,8 @@ class NetcdfFortran(AutotoolsPackage):
             # building takes place outside of Spack environment, i.e.
             # without Spack's compiler wrappers.
             config_flags = [self.spec['netcdf-c'].libs.search_flags]
+            if self.spec.satisfies('%xl') or self.spec.satisfies('%xl_r'):
+                config_flags.append(self.spec['hdf5'].libs.search_flags)
 
         return flags, None, config_flags
 
