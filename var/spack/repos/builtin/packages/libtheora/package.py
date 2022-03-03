@@ -24,6 +24,7 @@ class Libtheora(AutotoolsPackage):
     depends_on('doxygen', when='+doc', type='build')
     depends_on('libogg')
     depends_on('libpng')
+    depends_on('libpng@:1.6.0', when='@:1.1.1')
 
     patch('exit-prior-to-running-configure.patch', when='@1.1.1')
     patch('fix_encoding.patch', when='@1.1:')
