@@ -155,11 +155,14 @@ class Mumps(Package):
         makefile_conf.append('FC_PIC_FLAG={0}'.format(fpic))
         makefile_conf.append('CC_PIC_FLAG={0}'.format(cpic))
 
-        opt_level = '3' if using_xl else ''
+        optc = []
+        optf = []
+        optl = []
 
-        optc = ['-O{0}'.format(opt_level)]
-        optf = ['-O{0}'.format(opt_level)]
-        optl = ['-O{0}'.format(opt_level)]
+        if using_xl:
+            optc.append('-03')
+            optf.append('-03')
+            optl.append('-03')
 
         if shared:
             optc.append(cpic)
