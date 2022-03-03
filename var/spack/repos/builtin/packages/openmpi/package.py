@@ -182,6 +182,7 @@ class Openmpi(AutotoolsPackage):
 
     patch('nvhpc-libtool.patch', when='@master %nvhpc')
     patch('nvhpc-configure.patch', when='%nvhpc')
+    patch('nvhpc-avx.patch', when='%nvhpc@:21.9')
 
     # Fix MPI_Sizeof() in the "mpi" Fortran module for compilers that do not
     # support "IGNORE TKR" functionality (e.g. NAG).
@@ -273,9 +274,13 @@ class Openmpi(AutotoolsPackage):
         depends_on('numactl')
 
     depends_on('autoconf @2.69:',   type='build', when='@master')
+    depends_on('autoconf @2.69:',   type='build', when='%nvhpc')
     depends_on('automake @1.13.4:', type='build', when='@master')
+    depends_on('automake @:1.15.1', type='build', when='%nvhpc')
     depends_on('libtool @2.4.2:',   type='build', when='@master')
+    depends_on('libtool @2.4.2:',   type='build', when='%nvhpc')
     depends_on('m4',                type='build', when='@master')
+    depends_on('m4',                type='build', when='%nvhpc')
     depends_on('pandoc', type='build', when='@master')
 
     depends_on('perl',     type='build')
@@ -620,6 +625,11 @@ class Openmpi(AutotoolsPackage):
         perl = which('perl')
         perl('autogen.pl')
 
+    @when('%nvhpc')
+    def autoreconf(self, spec, prefix):
+        autogen = which('./autogen.pl')
+        autogen('--force')
+
     def configure_args(self):
         spec = self.spec
         config_args = [
@@ -779,6 +789,12 @@ class Openmpi(AutotoolsPackage):
                         config_args.append('CFLAGS=-D__LP64__')
             else:
                 config_args.append('--without-cuda')
+
+        if spec.satisfies('%nvhpc'):
+            config_args.append('CFLAGS=%s' % self.compiler.cc_pic_flag)
+            config_args.append('FFLAGS=%s' % self.compiler.fc_pic_flag)
+            config_args.append('CPPFLAGS=%s' % self.compiler.cc_pic_flag)
+            config_args.append('FCFLAGS=%s' % self.compiler.fc_pic_flag)
 
         if spec.satisfies('%nvhpc@:20.11'):
             # Workaround compiler issues
