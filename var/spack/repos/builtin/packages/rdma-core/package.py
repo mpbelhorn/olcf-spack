@@ -19,11 +19,15 @@ class RdmaCore(CMakePackage):
     version('31.0', sha256='51ae9a3ab81cd6834436813fafc310c8b7007feae9d09a53fdd5c169e648d50b')
     version('30.0', sha256='23e1bd2d7b38149a1621ee577a3428ac652e305adb8e0eee923cbe71356a9bf9')
     version('28.1', sha256='d9961fd9b0867f17cb6a30a728562f00528b63dd72d1168d838220ab44e5c713')
+    version('28.0', sha256='e8ae3a78f9908cdc9139e8f6a155cd0bb43a30d0e54f28a3c7a2df4af51b3f4d')
     version('27.1', sha256='39eeb3ab5f868ef3a5f7623d1ee69adca04efabe2a37de8080f354b8f4ef0ad7')
     version('26.2', sha256='115087ab438bea3530a0d520640f1eeb5872b902ee2263acf83dcc7835d296c6')
     version('25.4', sha256='f622491b0aac819f05c73174e0c7a9e630cc02fc0914d5ba1bb1d87fc4d313fd')
     version('24.3', sha256='3a02d2d864258acc763849c635c815e3fa6a798a1464511cd3a2a370ddd6ee89')
     version('23.4', sha256='6bfe009e9a382085def3b004d9396f7255a2e0c90c36647d1df0b86773d21a79')
+    version('22.6', sha256='b984e80af2bb9b22c5cd6bf802688b488338228ed9a5b09447e64292d65e2d0a')
+    version('22.3', sha256='482009a90b250c391639f9335e40fb4718c6c2c19bd8494d9ea02331600ff749')
+    version('20.6', sha256='ae2daaee0fc567e88c84966497993e40a83a502ebe90c0344481ef3b13787bf0')
     version('20', sha256='bc846989f807cd2b03643927d2b99fbf6f849cb1e766ab49bc9e81ce769d5421')
     version('17.1', sha256='b47444b7c05d3906deb8771eec3e634984dd83f5e620d5e37d3a83f74f0cc1ba')
     version('13', sha256='e5230fd7cda610753ad1252b40a28b1e9cf836423a10d8c2525b081527760d97')
@@ -32,12 +36,13 @@ class RdmaCore(CMakePackage):
     depends_on('py-docutils', type='build')
     depends_on('libnl')
     conflicts('platform=darwin', msg='rdma-core requires FreeBSD or Linux')
-    conflicts('%intel', msg='rdma-core cannot be built with intel (use gcc instead)')
+    conflicts('%intel', when="@:20.0",
+              msg='rdma-core cannot be built with intel (use gcc instead)')
 
-# NOTE: specify CMAKE_INSTALL_RUNDIR explicitly to prevent rdma-core from
-#       using the spack staging build dir (which may be a very long file
-#       system path) as a component in compile-time static strings such as
-#       IBACM_SERVER_PATH.
+    # NOTE: specify CMAKE_INSTALL_RUNDIR explicitly to prevent rdma-core from
+    #       using the spack staging build dir (which may be a very long file
+    #       system path) as a component in compile-time static strings such as
+    #       IBACM_SERVER_PATH.
     def cmake_args(self):
         cmake_args = [
             '-DCMAKE_INSTALL_SYSCONFDIR={0}'.format(self.spec.prefix.etc),
