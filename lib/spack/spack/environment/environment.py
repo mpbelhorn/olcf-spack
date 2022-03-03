@@ -2043,8 +2043,12 @@ def yaml_equivalent(first, second):
         return isinstance(second, dict) and _equiv_dict(first, second)
     elif isinstance(first, list):
         return isinstance(second, list) and _equiv_list(first, second)
-    else:  # it's a string
+    elif isinstance(first, six.string_types):
         return isinstance(second, six.string_types) and first == second
+    elif isinstance(first, second.__class__):
+        return first == second
+    else:
+        return False
 
 
 def _equiv_list(first, second):
