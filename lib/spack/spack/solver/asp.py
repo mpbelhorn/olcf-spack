@@ -1357,9 +1357,13 @@ class SpackSolverSetup(object):
 
         return sorted(supported, reverse=True)
 
-    def platform_defaults(self):
+    def platform_defaults(self, specs):
         self.gen.h2('Default platform')
         platform = spack.platforms.host()
+        for spec in specs:
+            if spec.architecture and spec.architecture.platform:
+                platform = spec.architecture.platform
+                break
         self.gen.fact(fn.node_platform_default(platform))
 
     def os_defaults(self, specs):
@@ -1740,7 +1744,7 @@ class SpackSolverSetup(object):
         self.compiler_supports_os()
 
         # architecture defaults
-        self.platform_defaults()
+        self.platform_defaults(specs)
         self.os_defaults(specs)
         self.target_defaults(specs)
 
