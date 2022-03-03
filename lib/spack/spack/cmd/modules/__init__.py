@@ -303,11 +303,15 @@ def refresh(module_type, specs, args):
 
     if len(file2writer) != len(writers):
         message = 'Name clashes detected in module files:\n'
+        conflict_format = '{/hash:7} {name}{@version}'
+        conflict_format += '{%compiler.name}{@compiler.version}{compiler_flags}'
+        conflict_format += '{variants}{arch=architecture}'
         for filename, writer_list in file2writer.items():
             if len(writer_list) > 1:
                 message += '\nfile: {0}\n'.format(filename)
                 for x in writer_list:
-                    message += 'spec: {0}\n'.format(x.spec.format())
+                    message += 'spec: {0}\n'.format(
+                            x.spec.format(format_string=conflict_format))
         tty.error(message)
         tty.error('Operation aborted')
         raise SystemExit(1)
