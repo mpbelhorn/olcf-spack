@@ -70,6 +70,9 @@ class Wget(AutotoolsPackage, GNUMirrorPackage):
             '--with-ssl={0}'.format(spec.variants['ssl'].value),
             '--without-included-regex',
         ]
+        if spec.variants['ssl'].value == 'openssl':
+            args.append('OPENSSL_LIBS=%s' % spec['openssl'].libs.link_flags)
+            args.append('OPENSSL_CFLAGS=%s' % spec['openssl'].libs.ld_flags)
 
         if '+zlib' in spec:
             args.append('--with-zlib')
