@@ -418,7 +418,7 @@ class Paraview(CMakePackage, CudaPackage):
                     '-DVTK_USE_SYSTEM_MPI4PY:BOOL=%s' % variant_bool('+mpi'))
 
         else:
-            cmake_args.append('-DPARAVIEW_ENABLE_PYTHON:BOOL=OFF')
+            cmake_args.append('-DPARAVIEW_USE_PYTHON:BOOL=OFF')
 
         if '+mpi' in spec:
             cmake_args.extend([
