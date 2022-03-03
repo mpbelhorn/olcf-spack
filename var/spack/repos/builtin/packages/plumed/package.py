@@ -199,7 +199,7 @@ class Plumed(AutotoolsPackage):
         # Set flags to help find gsl
         if '+gsl' in spec:
             gsl_libs = spec['gsl'].libs
-            blas_libs = spec['blas'].libs
+            blas_libs = spec['blas:c,fortran'].libs
             extra_libs.append(
                 (gsl_libs + blas_libs).ld_flags
             )
