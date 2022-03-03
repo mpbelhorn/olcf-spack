@@ -46,6 +46,7 @@ class Arborx(CMakePackage):
 
     # Standalone Kokkos
     depends_on('kokkos@3.1.00:', when='~trilinos')
+    depends_on('kokkos~cuda~cuda_lambda', when='~trilinos~cuda')
     for backend in kokkos_backends:
         depends_on('kokkos+%s' % backend.lower(), when='~trilinos+%s' %
                    backend.lower())
