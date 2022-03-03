@@ -56,9 +56,9 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on('umpire@main', when='@main')
 
     with when('+cuda'):
-        depends_on('umpire+cuda')
+        depends_on('umpire+cuda~shared')
         for sm_ in CudaPackage.cuda_arch_values:
-            depends_on('umpire+cuda cuda_arch={0}'.format(sm_),
+            depends_on('umpire+cuda~shared cuda_arch={0}'.format(sm_),
                        when='cuda_arch={0}'.format(sm_))
 
     with when('+rocm'):
