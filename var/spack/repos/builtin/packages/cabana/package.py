@@ -51,6 +51,8 @@ class Cabana(CMakePackage):
             elif (_kk_version == "-legacy" and
                   _backend not in ['serial', 'openmp', 'cuda']):
                 continue
+            elif _backend == "cuda":
+                _kk_spec = 'kokkos{0}+{1}+cuda_lambda'.format(_kk_version, _backend)
             else:
                 _kk_spec = 'kokkos{0}+{1}'.format(_kk_version, _backend)
             depends_on(_kk_spec, when='@{0}+{1}'.format(_version, _backend))
