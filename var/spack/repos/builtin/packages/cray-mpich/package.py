@@ -101,7 +101,8 @@ class CrayMpich(Package):
     @property
     def headers(self):
         hdrs = find_headers('mpi', self.prefix.include, recursive=True)
-        hdrs.directories = os.path.dirname(hdrs[0])
+        if hdrs:
+            hdrs.directories = os.path.dirname(hdrs[0])
         return hdrs
 
     @property
