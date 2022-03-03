@@ -13,6 +13,7 @@ class CrayLibsci(Package):
     has_code = False    # Skip attempts to fetch source that is not available
 
     version("21.08.1.2")
+    version("21.06.1.1")
     version("20.06.1")
     version("20.03.1")
     version("19.06.1")
@@ -27,6 +28,8 @@ class CrayLibsci(Package):
     variant("shared", default=True, description="enable shared libs")
     variant("openmp", default=False, description="link with openmp")
     variant("mpi", default=False, description="link with mpi libs")
+
+    depends_on('cray-mpich', when="@21.06.1.1:")
 
     provides("blas")
     provides("lapack")
