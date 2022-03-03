@@ -392,17 +392,17 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         # configuration script choose defaults.
         if spec.compiler_flags['cflags']:
             options += [
-                'CFLAGS=%s' % ' '.join(spec.compiler_flags['cflags'])]
+                'CFLAGS=%s' % ' '.join(spec.compiler_flags['cflags'] + [self.compiler.cc_pic_flag])]
             if '+debug' not in spec:
                 options += ['COPTFLAGS=']
         if spec.compiler_flags['fflags']:
             options += [
-                'FFLAGS=%s' % ' '.join(spec.compiler_flags['fflags'])]
+                'FFLAGS=%s' % ' '.join(spec.compiler_flags['fflags'] + [self.compiler.fc_pic_flag])]
             if '+debug' not in spec:
                 options += ['FOPTFLAGS=']
         if spec.compiler_flags['cxxflags']:
             options += [
-                'CXXFLAGS=%s' % ' '.join(spec.compiler_flags['cxxflags'])]
+                'CXXFLAGS=%s' % ' '.join(spec.compiler_flags['cxxflags'] + [self.compiler.cxx_pic_flag])]
             if '+debug' not in spec:
                 options += ['CXXOPTFLAGS=']
         options.extend(self.mpi_dependent_options())
