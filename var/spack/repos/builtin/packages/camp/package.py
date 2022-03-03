@@ -28,7 +28,7 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
     # TODO: figure out gtest dependency and then set this default True.
     variant('tests', default=False, description='Build tests')
 
-    depends_on('cub', when='+cuda')
+    depends_on('cub', when='+cuda ^cuda@:10')
 
     depends_on('blt')
 
