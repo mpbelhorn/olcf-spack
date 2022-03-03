@@ -16,6 +16,7 @@ class Blt(Package):
     tags     = ['radiuss']
 
     maintainers = ['white238', 'davidbeckingsale']
+    patch('rocm_cmake.patch', when='@0.4.1')
 
     version('develop', branch='develop')
     version('main', branch='main')
