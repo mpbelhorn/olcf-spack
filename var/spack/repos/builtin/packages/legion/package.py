@@ -24,10 +24,12 @@ class Legion(CMakePackage, ROCmPackage):
 
     homepage = "https://legion.stanford.edu/"
     git = "https://github.com/StanfordLegion/legion.git"
+    url = "https://github.com/StanfordLegion/legion/archive/refs/tags/legion-20.03.0.tar.gz"
 
     maintainers = ['pmccormick', 'streichler']
     tags = ['e4s']
-    version('21.03.0', tag='legion-21.03.0')
+    version('21.03.0', sha256='659cd2b397828802f38d85f3f55c1e279ed90accc69ca34d7aa3f4f26416afe8')
+    version('20.03.0', sha256='e1a2dfded7f7fd4db035e147615a975e2558d687a26893cd79f000d3cb0e540e')
     version('stable', branch='stable')
     version('master', branch='master')
     version('cr', branch='control_replication')
@@ -383,7 +385,10 @@ class Legion(CMakePackage, ROCmPackage):
     def cache_test_sources(self):
         """Copy the example source files after the package is installed to an
         install test subdirectory for use during `spack test run`."""
-        self.cache_extra_test_sources([join_path('examples', 'local_function_tasks')])
+        try:
+            self.cache_extra_test_sources([join_path('examples', 'local_function_tasks')])
+        except OSError as err:
+            pass
 
     def run_local_function_tasks_test(self):
         """Run stand alone test: local_function_tasks"""
