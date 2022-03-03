@@ -308,6 +308,8 @@ class Gromacs(CMakePackage):
         if '+cuda' in self.spec:
             options.append('-DCUDA_TOOLKIT_ROOT_DIR:STRING=' +
                            self.spec['cuda'].prefix)
+            if self.spec.satisfies('%gcc target=ppc64le'):
+                options.append('-DCUDA_NVCC_FLAGS=-Xcompiler=-mno-float128')
 
         if '+opencl' in self.spec:
             options.append('-DGMX_USE_OPENCL=on')
