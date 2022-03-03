@@ -34,7 +34,7 @@ class Rocfft(CMakePackage):
 
     amdgpu_targets = (
         'gfx701', 'gfx801', 'gfx802', 'gfx803',
-        'gfx900', 'gfx906', 'gfx908', 'gfx1010',
+        'gfx900', 'gfx906', 'gfx908', 'gfx90a', 'gfx1010',
         'gfx1011', 'gfx1012'
     )
 
