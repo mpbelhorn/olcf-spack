@@ -300,6 +300,9 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
                 self.spec["kokkos-nvcc-wrapper"].kokkos_cxx
             ))
 
+        if self.spec.satisfies('%gcc@8: +cuda target=ppc64le'):
+            options.append('-DCMAKE_CXX_FLAGS=-mno-float128')
+
         return options
 
     test_script_relative_path = join_path('scripts', 'spack_test')
