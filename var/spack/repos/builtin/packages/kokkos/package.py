@@ -102,6 +102,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "thunderx2": "THUNDERX2",
         "zen": "ZEN",
         "zen2": "ZEN2",
+        "zen3": "ZEN3",
         "steamroller": "KAVERI",
         "excavator": "CARIZO",
         "power7": "POWER7",
