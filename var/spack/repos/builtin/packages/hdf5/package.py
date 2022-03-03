@@ -102,7 +102,7 @@ class Hdf5(CMakePackage):
               msg='v112 is not compatible with this release')
     conflicts('api=v110', when='@1.6:1.8',
               msg='v110 is not compatible with this release')
-    conflicts('api=v18', when='@1.6.0:1.6',
+    conflicts('api=v18', when='@:1.6',
               msg='v18 is not compatible with this release')
 
     # The Java wrappers cannot be built without shared libs.
