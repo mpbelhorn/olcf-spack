@@ -17,21 +17,18 @@ class Grads(AutotoolsPackage):
     homepage = "http://cola.gmu.edu/grads/grads.php"
     url      = "ftp://cola.gmu.edu/grads/2.2/grads-2.2.1-src.tar.gz"
 
+    version('2.2.2', sha256='5b28c2674c538342132f1a557be72287850ddaf10f51b7161c6837cf833f2c8f')
     version('2.2.1', sha256='695e2066d7d131720d598bac0beb61ac3ae5578240a5437401dc0ffbbe516206')
 
     variant('geotiff', default=True, description="Enable GeoTIFF support")
     variant('shapefile', default=True, description="Enable Shapefile support")
 
-    """
-    # FIXME: Fails with undeclared functions (tdefi, tdef, ...) in gauser.c
     variant('hdf5', default=False, description="Enable HDF5 support")
     variant('hdf4', default=False, description="Enable HDF4 support")
     variant('netcdf', default=False, description="Enable NetCDF support")
-    depends_on('hdf5', when='+hdf5')
+    depends_on('hdf5~mpi', when='+hdf5')
     depends_on('hdf', when='+hdf4')
-    depends_on('netcdf-c', when='+netcdf')
-    """
-
+    depends_on('netcdf-c~mpi~parallel-netcdf', when='+netcdf')
     depends_on('libgeotiff', when='+geotiff')
     depends_on('shapelib', when='+shapefile')
     depends_on('udunits')
@@ -62,4 +59,6 @@ class Grads(AutotoolsPackage):
     def configure_args(self):
         args = []
         args.extend(self.with_or_without('geotiff'))
+        args.extend(self.with_or_without('hdf5'))
+        args.extend(self.with_or_without('netcdf'))
         return args
