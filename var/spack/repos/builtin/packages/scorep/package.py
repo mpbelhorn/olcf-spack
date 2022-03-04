@@ -95,6 +95,8 @@ class Scorep(AutotoolsPackage):
             "--enable-shared"]
 
         cname = spec.compiler.name
+        if cname == 'nvhpc':
+            cname = 'pgi'
         config_args.append('--with-nocross-compiler-suite={0}'.format(cname))
 
         if self.version >= Version('4.0'):
@@ -116,7 +118,8 @@ class Scorep(AutotoolsPackage):
             config_args.append("--with-libunwind=%s" %
                                spec['libunwind'].prefix)
 
-        config_args += self.with_or_without('shmem')
+        if spec.satisfies('~shmem'):
+            config_args += self.with_or_without('shmem')
         config_args += self.with_or_without('mpi')
 
         if spec.satisfies('^intel-mpi'):
@@ -125,6 +128,8 @@ class Scorep(AutotoolsPackage):
             config_args.append('--with-mpi=mpich3')
         elif spec.satisfies('^openmpi'):
             config_args.append('--with-mpi=openmpi')
+        elif spec.satisfies('^spectrum-mpi'):
+            config_args.append('--with-mpi=spectrum')
 
         config_args.extend([
             'CFLAGS={0}'.format(self.compiler.cc_pic_flag),
