@@ -202,6 +202,9 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     depends_on('raja+cuda', when='+raja +cuda')
     depends_on('raja+rocm', when='+raja +rocm')
 
+    # ROCm extra dependencies
+    depends_on('hip-rocclr', type='build', when='+rocm')
+
     # External libraries
     depends_on('caliper',                 when='+caliper')
     depends_on('lapack',                  when='+lapack')
@@ -328,6 +331,8 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
             if archs[0] != 'none':
                 arch_str = ",".join(archs)
                 args.append('-DCMAKE_CUDA_ARCHITECTURES=%s' % arch_str)
+                sm_str = ','.join(['sm_%s' % i for i in archs])
+                args.append('-DCUDA_ARCH=%s' % sm_str)
         else:
             args.append('-DCUDA_ENABLE=OFF')
 
