@@ -110,6 +110,7 @@ class Ucx(AutotoolsPackage, CudaPackage):
             '--without-go',  # todo
             '--disable-doxygen-doc'  # todo
         ]
+        args.append('--enable-devel-headers')
 
         args += self.enable_or_disable('assertions')
         args.append('--enable-compiler-opt=' + self.spec.variants['opt'].value)
