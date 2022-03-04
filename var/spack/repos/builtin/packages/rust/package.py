@@ -496,11 +496,11 @@ class Rust(Package):
     # This routine returns the target architecture we intend to build for.
     def get_rust_target(self):
         if 'platform=linux' in self.spec or 'platform=cray' in self.spec:
-            if 'target=x86_64:' in self.spec:
+            if 'x86_64' in self.spec.target.name:
                 return 'x86_64-unknown-linux-gnu'
-            elif 'target=ppc64le:' in self.spec:
+            elif 'ppc64le' in self.spec.target.name:
                 return 'powerpc64le-unknown-linux-gnu'
-            elif 'target=aarch64:' in self.spec:
+            elif 'aarch64' in self.spec.target.name:
                 return 'aarch64-unknown-linux-gnu'
         elif 'platform=darwin' in self.spec:
             if 'target=x86_64:' in self.spec:
