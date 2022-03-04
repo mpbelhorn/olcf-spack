@@ -176,6 +176,9 @@ class SuiteSparse(Package):
         if spack_f77.endswith('xlf') or spack_f77.endswith('xlf_r'):
             make_args += ['CFLAGS+=-DBLAS_NO_UNDERSCORE']
 
+        if spec.satisfies('%gcc@11.2.0 platform=cray'):
+            make_args += ['CFLAGS+=-w']
+
         # Intel TBB in SuiteSparseQR
         if '+tbb' in spec:
             make_args += [
