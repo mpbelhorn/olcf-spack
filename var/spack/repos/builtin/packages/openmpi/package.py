@@ -212,6 +212,7 @@ class Openmpi(AutotoolsPackage, CudaPackage):
         ).with_non_feature_values('auto', 'none'),
         description="List of fabrics that are enabled; "
                     "'auto' lets openmpi determine",
+        sticky=True,
     )
 
     variant(
