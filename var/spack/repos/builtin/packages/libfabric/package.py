@@ -61,7 +61,8 @@ class Libfabric(AutotoolsPackage):
             default='sockets,tcp,udp',
             description='A list of enabled fabrics',
             values=fabrics,
-            multi=True)
+            multi=True,
+            sticky=True)
 
     # NOTE: the 'kdreg' variant enables use of the special /dev/kdreg file to
     #   assist in memory registration caching in the GNI provider.  This
