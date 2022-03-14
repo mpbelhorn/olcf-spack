@@ -1253,7 +1253,7 @@ class Environment(object):
         start = time.time()
         max_processes = min(
             len(arguments),  # Number of specs
-            16  # Cap on 16 cores
+            10  # Cap on 16 cores
         )
 
         # TODO: revisit this print as soon as darwin is parallel too
