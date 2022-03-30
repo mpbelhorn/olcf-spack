@@ -157,52 +157,52 @@ class Tasmanian(CMakePackage, CudaPackage, ROCmPackage):
 
         return args
 
-    # TODO: Replace this method and its 'get' use for cmake path with
-    #   join_path(self.spec['cmake'].prefix.bin, 'cmake') once stand-alone
-    #   tests can access build dependencies through self.spec['cmake'].
-    def cmake_bin(self, set=True):
-        """(Hack) Set/get cmake dependency path."""
-        filepath = join_path(self.install_test_root, 'cmake_bin_path.txt')
-        if set:
-            with open(filepath, 'w') as out_file:
-                cmake_bin = join_path(self.spec['cmake'].prefix.bin, 'cmake')
-                out_file.write('{0}\n'.format(cmake_bin))
-        elif os.path.isfile(filepath):
-            with open(filepath, 'r') as in_file:
-                return in_file.read().strip()
+    # # TODO: Replace this method and its 'get' use for cmake path with
+    # #   join_path(self.spec['cmake'].prefix.bin, 'cmake') once stand-alone
+    # #   tests can access build dependencies through self.spec['cmake'].
+    # def cmake_bin(self, set=True):
+    #     """(Hack) Set/get cmake dependency path."""
+    #     filepath = join_path(self.install_test_root, 'cmake_bin_path.txt')
+    #     if set:
+    #         with open(filepath, 'w') as out_file:
+    #             cmake_bin = join_path(self.spec['cmake'].prefix.bin, 'cmake')
+    #             out_file.write('{0}\n'.format(cmake_bin))
+    #     elif os.path.isfile(filepath):
+    #         with open(filepath, 'r') as in_file:
+    #             return in_file.read().strip()
 
-    @run_after('install')
-    def setup_smoke_test(self):
-        if not self.spec['cmake'].satisfies('@3.10:'):
-            tty.msg('Error tasmanian test: CMake 3.10 or higher is required')
-            return
+    # @run_after('install')
+    # def setup_smoke_test(self):
+    #     if not self.spec['cmake'].satisfies('@3.10:'):
+    #         tty.msg('Error tasmanian test: CMake 3.10 or higher is required')
+    #         return
 
-        install_tree(self.prefix.share.Tasmanian.testing,
-                     join_path(self.install_test_root, 'testing'))
-        self.cmake_bin(set=True)
+    #     install_tree(self.prefix.share.Tasmanian.testing,
+    #                  join_path(self.install_test_root, 'testing'))
+    #     self.cmake_bin(set=True)
 
-    def test(self):
-        cmake_bin = self.cmake_bin(set=False)
+    # def test(self):
+    #     cmake_bin = self.cmake_bin(set=False)
 
-        if not cmake_bin:
-            tty.msg('Skipping tasmanian test: cmake_bin_path.txt not found')
-            return
+    #     if not cmake_bin:
+    #         tty.msg('Skipping tasmanian test: cmake_bin_path.txt not found')
+    #         return
 
-        # using the tests copied from <prefix>/share/Tasmanian/testing
-        cmake_dir = self.test_suite.current_test_cache_dir.testing
+    #     # using the tests copied from <prefix>/share/Tasmanian/testing
+    #     cmake_dir = self.test_suite.current_test_cache_dir.testing
 
-        if not self.run_test(cmake_bin,
-                             options=[cmake_dir],
-                             purpose='Generate the Makefile'):
-            tty.msg('Skipping tasmanian test: failed to generate Makefile')
-            return
+    #     if not self.run_test(cmake_bin,
+    #                          options=[cmake_dir],
+    #                          purpose='Generate the Makefile'):
+    #         tty.msg('Skipping tasmanian test: failed to generate Makefile')
+    #         return
 
-        if not self.run_test('make',
-                             purpose='Build test software'):
-            tty.msg('Skipping tasmanian test: failed to build test')
-            return
+    #     if not self.run_test('make',
+    #                          purpose='Build test software'):
+    #         tty.msg('Skipping tasmanian test: failed to build test')
+    #         return
 
-        if not self.run_test('make',
-                             options=['test'],
-                             purpose='Run test'):
-            tty.msg('Failed tasmanian test: failed to run test')
+    #     if not self.run_test('make',
+    #                          options=['test'],
+    #                          purpose='Run test'):
+    #         tty.msg('Failed tasmanian test: failed to run test')
