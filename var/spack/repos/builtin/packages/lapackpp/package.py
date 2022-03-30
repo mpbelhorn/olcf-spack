@@ -49,7 +49,9 @@ class Lapackpp(CMakePackage):
         args = [
             '-DBUILD_SHARED_LIBS=%s' % ('+shared' in spec),
             '-Dbuild_tests=%s'       % self.run_tests,
-            '-DLAPACK_LIBRARIES=%s'  % spec['lapack'].libs.joined(';')
+            '-Duse_cmake_find_lapack=YES',
+            '-DLAPACK_LIBRARIES=%s'  % spec['lapack'].libs.joined(';'),
+            '-DBLAS_LIBRARIES=%s'  % spec['blas'].libs.joined(';'),
         ]
 
         if spec['blas'].name == 'cray-libsci':
@@ -66,6 +68,7 @@ class Lapackpp(CMakePackage):
             raise Exception('The tester was not built!')
 
     def flag_handler(self, name, flags):
-        if (self.spec['blas'].name == 'cray-libsci') and name == 'cxxflags':
+        if (self.spec['blas'].name == 'cray-libsci'
+                or 'gfortran' in self.compiler.fc_names) and name == 'cxxflags':
             flags.append('-DLAPACK_FORTRAN_ADD_')
         return (None, None, flags)
