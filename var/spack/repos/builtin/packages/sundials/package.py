@@ -681,40 +681,40 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
             with open(filepath, 'r') as in_file:
                 return in_file.read().strip()
 
-    @run_after('install')
-    def setup_smoke_tests(self):
-        install_tree(self._smoke_tests_path,
-                     join_path(self.install_test_root, 'testing'))
-        self.cmake_bin(set=True)
+    # @run_after('install')
+    # def setup_smoke_tests(self):
+    #     install_tree(self._smoke_tests_path,
+    #                  join_path(self.install_test_root, 'testing'))
+    #     self.cmake_bin(set=True)
 
-    def build_smoke_tests(self):
-        cmake_bin = self.cmake_bin(set=False)
+    # def build_smoke_tests(self):
+    #     cmake_bin = self.cmake_bin(set=False)
 
-        if not cmake_bin:
-            tty.msg('Skipping sundials test: cmake_bin_path.txt not found')
-            return
+    #     if not cmake_bin:
+    #         tty.msg('Skipping sundials test: cmake_bin_path.txt not found')
+    #         return
 
-        for smoke_test in self._smoke_tests:
-            work_dir = join_path(self._smoke_tests_path, os.path.dirname(smoke_test[0]))
-            with working_dir(work_dir):
-                if smoke_test[3]:  # use cmake
-                    self.run_test(exe=cmake_bin, options=['.'])
-                self.run_test(exe='make')
+    #     for smoke_test in self._smoke_tests:
+    #         work_dir = join_path(self._smoke_tests_path, os.path.dirname(smoke_test[0]))
+    #         with working_dir(work_dir):
+    #             if smoke_test[3]:  # use cmake
+    #                 self.run_test(exe=cmake_bin, options=['.'])
+    #             self.run_test(exe='make')
 
-    def run_smoke_tests(self):
-        for smoke_test in self._smoke_tests:
-            self.run_test(exe=join_path(self._smoke_tests_path, smoke_test[0]),
-                          options=smoke_test[1], status=[0], installed=True,
-                          skip_missing=True, purpose=smoke_test[2])
+    # def run_smoke_tests(self):
+    #     for smoke_test in self._smoke_tests:
+    #         self.run_test(exe=join_path(self._smoke_tests_path, smoke_test[0]),
+    #                       options=smoke_test[1], status=[0], installed=True,
+    #                       skip_missing=True, purpose=smoke_test[2])
 
-    def clean_smoke_tests(self):
-        for smoke_test in self._smoke_tests:
-            work_dir = join_path(self._smoke_tests_path, os.path.dirname(smoke_test[0]))
-            with working_dir(work_dir):
-                self.run_test(exe='make', options=['clean'])
+    # def clean_smoke_tests(self):
+    #     for smoke_test in self._smoke_tests:
+    #         work_dir = join_path(self._smoke_tests_path, os.path.dirname(smoke_test[0]))
+    #         with working_dir(work_dir):
+    #             self.run_test(exe='make', options=['clean'])
 
-    def test(self):
-        self.build_smoke_tests()
-        self.run_smoke_tests()
-        self.clean_smoke_tests()
-        return
+    # def test(self):
+    #     self.build_smoke_tests()
+    #     self.run_smoke_tests()
+    #     self.clean_smoke_tests()
+    #     return
