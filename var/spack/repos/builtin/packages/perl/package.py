@@ -103,6 +103,9 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
     conflicts('@5.32.0:', when='%nvhpc@:20.11',
               msg='The NVIDIA compilers are incompatible with version 5.32 and later')
 
+    conflicts('@5.32.0:', when='%intel@:19.0.3',
+              msg='Older intel compilers are incompatible with version 5.32 and later')
+
     # Make sure we don't get "recompile with -fPIC" linker errors when using static libs
     conflicts('^zlib~shared~pic', msg='Needs position independent code when using static zlib')
     conflicts('^bzip2~shared~pic', msg='Needs position independent code when using static bzip2')

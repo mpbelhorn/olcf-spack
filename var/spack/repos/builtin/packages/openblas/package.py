@@ -138,6 +138,8 @@ class Openblas(MakefilePackage):
     conflicts('+consistent_fpcsr', when='threads=none',
               msg='FPCSR consistency only applies to multithreading')
 
+    conflicts('%intel', when='@0.3.18:0.3.19')
+
     conflicts('threads=pthreads', when='~locking', msg='Pthread support requires +locking')
     conflicts('threads=openmp', when='%apple-clang', msg="Apple's clang does not support OpenMP")
     conflicts('threads=openmp @:0.2.19', when='%clang', msg='OpenBLAS @:0.2.19 does not support OpenMP with clang!')
