@@ -76,6 +76,7 @@ class Cairo(AutotoolsPackage):
         args.extend(self.enable_or_disable('gobject'))
         args.extend(self.enable_or_disable('ft'))
         args.extend(self.enable_or_disable('fc'))
+        args.extend(self.enable_or_disable('svg'))
 
         return args
 
