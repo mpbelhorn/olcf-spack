@@ -366,7 +366,7 @@ class Boost(Package):
 
             filter_file('-fast', '-O1', 'tools/build/src/tools/pgi.jam')
             filter_file('-fast', '-O1', 'tools/build/src/engine/build.sh')
-        if self.spec.satisfies('@1.77.0%intel'):
+        if self.spec.satisfies('@1.77.0: %intel'):
             filter_file(' -static', '', 'tools/build/src/engine/build.sh')
 
         # Fixes https://github.com/spack/spack/issues/29352
