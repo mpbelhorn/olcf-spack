@@ -383,8 +383,8 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
             if '+stk%intel' in spec:
                 # Workaround for Intel compiler segfaults with STK and IPO
                 flags.append('-no-ipo')
-            if '+wrapper' in spec:
-                flags.append('--expt-extended-lambda')
+            # if '+wrapper' in spec:
+            #     flags.append('--expt-extended-lambda')
         elif name == 'ldflags' and is_cce:
             flags.append('-fuse-ld=gold')
 
@@ -471,6 +471,9 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
             define_trilinos_enable('EXPLICIT_INSTANTIATION',
                                    'explicit_template_instantiation')
         ])
+
+        if '+cuda' in spec and '+wrapper' in spec:
+            options.append(define('CMAKE_CXX_FLAGS', '--expt-extended-lambda'))
 
         if spec.version >= Version('13'):
             options.append(define_from_variant('CMAKE_CXX_STANDARD', 'cxxstd'))
