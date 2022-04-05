@@ -206,8 +206,7 @@ class SuiteSparse(Package):
             'LDL',
             'KLU',
             'UMFPACK',
-            'RBio',
-            'SPQR'
+            'RBio'
         ]
         if spec.satisfies('+cuda'):
             targets.extend([
