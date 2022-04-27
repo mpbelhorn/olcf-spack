@@ -71,6 +71,7 @@ class Cdo(AutotoolsPackage):
 
     depends_on('grib-api', when='grib2=grib-api')
     depends_on('eccodes', when='grib2=eccodes')
+    depends_on('eccodes+aec', when='+aec grib2=eccodes')
 
     depends_on('szip', when='+szip')
     depends_on('libaec', when='+aec')
