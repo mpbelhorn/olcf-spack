@@ -36,7 +36,7 @@ class Cairo(AutotoolsPackage):
     depends_on('libxcb', when='+X')
     depends_on('python', when='+X', type='build')
     depends_on('libpng', when='+png')
-    depends_on('librsvg', when='+svg')
+    # depends_on('librsvg', when='+svg')
     depends_on('glib')
     depends_on('pixman@0.36.0:', when='@1.17.2:')
     depends_on('pixman')

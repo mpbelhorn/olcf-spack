@@ -23,7 +23,7 @@ class Librsvg(AutotoolsPackage):
     depends_on("pkgconfig", type='build')
     depends_on("rust", type='build')
     depends_on('gtk-doc', type='build', when='+doc')
-    depends_on("cairo+gobject")
+    depends_on("cairo+gobject+png+svg")
     depends_on("gdk-pixbuf")
     depends_on("glib")
     depends_on("libcroco")
