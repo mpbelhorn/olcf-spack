@@ -154,11 +154,11 @@ def solve(parser, args):
 
     # If we have an active environment, pick the specs from there
     env = spack.environment.active_environment()
-    if env and args.specs:
-        msg = "cannot give explicit specs when an environment is active"
-        raise RuntimeError(msg)
-
-    specs = list(env.user_specs) if env else spack.cmd.parse_specs(args.specs)
+    specs = list()
+    if args.specs:
+        specs = spack.cmd.parse_specs(args.specs)
+    elif env:
+        specs = list(env.user_specs)
 
     solver = asp.Solver()
     output = sys.stdout if "asp" in show else None
