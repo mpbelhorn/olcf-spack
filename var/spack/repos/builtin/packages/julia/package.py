@@ -137,7 +137,7 @@ class Julia(MakefilePackage):
 
     # Patches for julia
     patch('julia-1.6-system-libwhich-and-p7zip-symlink.patch', when='@1.6.0:1.6')
-    patch('use-add-rpath.patch')
+    patch('use-add-rpath.patch', when='@:1.7.1')
 
     # Fix gfortran abi detection https://github.com/JuliaLang/julia/pull/44026
     patch('fix-gfortran.patch', when='@1.7.0:1.7.2')
