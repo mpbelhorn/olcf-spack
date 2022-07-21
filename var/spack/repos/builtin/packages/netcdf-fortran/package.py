@@ -66,6 +66,8 @@ class NetcdfFortran(AutotoolsPackage):
     patch('no_parallel_build.patch', when='@4.5.2')
 
     def flag_handler(self, name, flags):
+        config_flags = None
+
         if name == 'cflags':
             if '+pic' in self.spec:
                 flags.append(self.compiler.cc_pic_flag)
@@ -85,12 +87,15 @@ class NetcdfFortran(AutotoolsPackage):
                 flags.append('-ef')
         elif name == 'ldflags' and (self.spec.satisfies('%xl') or
                                     self.spec.satisfies('%xl_r')):
-            flags.append(self.spec['hdf5'].libs.search_flags)
+            hdf5_lib_search_flags = self.spec['hdf5'].libs.search_flags
+            flags.append(hdf5_lib_search_flags)
+            config_flags = [self.spec['netcdf-c'].libs.search_flags,
+                            hdf5_lib_search_flags]
 
         # Note that cflags and fflags should be added by the compiler wrapper
         # and not on the command line to avoid overriding the default
         # compilation flags set by the configure script:
-        return flags, None, None
+        return flags, None, config_flags
 
     @property
     def libs(self):
@@ -139,6 +144,10 @@ class NetcdfFortran(AutotoolsPackage):
                 # not run by default and explicitly disabled above. To avoid the
                 # configuration failure, we set the following cache variable:
                 config_args.append('ac_cv_func_MPI_File_open=yes')
+            if self.spec.satisfies('%xl') or self.spec.satisfies('%xl_r'):
+                config_args.append('CC=%s' % self.spec['mpi'].mpicc)
+                config_args.append('FC=%s' % self.spec['mpi'].mpifc)
+                config_args.append('F77=%s' % self.spec['mpi'].mpif77)
 
         return config_args
 
