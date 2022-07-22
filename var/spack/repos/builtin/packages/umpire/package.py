@@ -108,7 +108,7 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     # device allocator exports device code, which requires static libs
     # currently only available for cuda.
-    conflicts('+shared', when='+cuda')
+    conflicts('+shared', when='+cuda+examples')
 
     # https://github.com/LLNL/Umpire/issues/653
     # This range looks weird, but it ensures the concretizer looks at it as a
