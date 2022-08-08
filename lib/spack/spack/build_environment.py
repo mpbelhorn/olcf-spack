@@ -847,6 +847,9 @@ def setup_package(pkg, dirty, context='build'):
         load_module(target.module_name)
 
     load_external_modules(pkg)
+    if on_cray and os.environ.get('CRAY_LD_LIBRARY_PATH'):
+            env_mods.prepend_path('LD_LIBRARY_PATH',
+                                  os.environ['CRAY_LD_LIBRARY_PATH'])
 
     implicit_rpaths = pkg.compiler.implicit_rpaths()
     if implicit_rpaths:
