@@ -88,6 +88,8 @@ class Libzmq(AutotoolsPackage):
             config_args.append('--with-libsodium')
         if '~docs' in self.spec:
             config_args.append('--without-docs')
+        if self.spec.satisfies('%gcc@12:'):
+            config_args.append('--disable-Werror')
         if 'clang' in self.compiler.cc:
             config_args.append("CFLAGS=-Wno-gnu")
             config_args.append("CXXFLAGS=-Wno-gnu")
